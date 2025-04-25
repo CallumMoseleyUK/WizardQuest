@@ -84,7 +84,7 @@ if __name__ == '__main__':
         0.0
         ]
     first_entity.angular_velocity = [
-        0.0,
+        0.2,
         0.0,
         0.0
         ]
