@@ -1,0 +1,136 @@
+import numpy as np
+import mathquest.quaternion as mqq
+#from models.model import RenderObject
+
+class Entity:
+    '''
+    Base class for entities with position, rotation and render/collision models
+    '''
+
+    def __init__(self):
+        self._quaternion_correction_counter = 0
+        self._quaternion_correction_frame_limit = 0 #number of orientation changes before quaternion normalization
+
+        self._position = np.array([0.0,0.0,0.0])
+        self._quaternion = mqq.Quat()
+
+        self._effects = []
+
+        self._child_entities = []
+        self._render_object = None
+
+    def update(self,dt,parent=None):
+        #for effect in self._effects:
+        #    effect.update(dt,self)
+        for child in self._child_entities:
+            child.update(dt,parent=self)
+
+    def draw(self,viewport,parent=None):
+        draw_position = self.position
+        draw_quat = self.quaternion
+        if parent!=None:
+            draw_position += parent.position*0
+        if self.render_object != None:
+            self.render_object.draw(viewport,draw_position,draw_quat)
+        for child in self._child_entities:
+            child.draw(viewport,parent=self)
+
+    def add_effect(self,effect):
+        self.effects.add(effect)
+        effect.added(self)
+    def add_effect(self,effect):
+        self.effects.remove(effect)
+        effect.removed(self)
+    
+    
+    def add_child(self,child):
+        self._child_entities.append(child)
+        child.parent_added(self)
+    def remove_child(self,child):
+        self._child_entities.remove(child)
+        child.parent_removed(self)
+
+    def parent_added(self,parent):
+        pass
+    def parent_removed(self,parent):
+        pass
+    
+    def set_rotation(self,roll,pitch,yaw,bDegrees=False):
+        self.quaternion = mqq.Quat.euler_to_quat(roll,pitch,yaw,bDegrees=bDegrees)
+
+    def rotate(self,angle_axis):
+        self.quaternion = self.quaternion.rotate(angle_axis)
+        
+    def x_axis(self):
+        return self.quaternion.x_axis()
+    def y_axis(self):
+        return self.quaternion.y_axis()
+    def z_axis(self):
+        return self.quaternion.z_axis()
+
+    ## Properties 
+    @property
+    def position(self):
+        return self._position
+    @position.setter
+    def position(self,value):
+        value = np.array(value)
+        self._position = np.array(value)
+
+    @property
+    def quaternion(self):
+        return self._quaternion
+    @quaternion.setter
+    def quaternion(self,value):
+        self._quaternion = mqq.Quat(value)
+        if self._quaternion_correction_counter < self._quaternion_correction_frame_limit:
+            self._quaternion_correction_counter += 1
+        else:
+            self._quaternion = self._quaternion.normalize()
+            self._quaternion_correction_counter = 0
+
+    @property
+    def rotation(self):
+        '''Format: (roll, pitch, yaw)'''
+        return self._quaternion.to_euler()
+    @rotation.setter
+    def rotation(self,value):
+        self._quaternion = mqq.Quat.euler_to_quat(roll=value[0],pitch=value[1],yaw=value[2])
+
+    @property
+    def render_object(self):
+        return self._render_object
+    @render_object.setter
+    def render_object(self,value):
+        self._render_object = value
+    
+
+class DynamicEntity(Entity):
+    '''
+    Base class for anything that exists and moves
+    '''
+
+    def __init__(self):
+        super().__init__()
+        self._velocity = np.zeros(3)
+        self._angular_velocity = np.zeros(3)
+
+    def update(self,dt,parent=None):
+        super().update(dt,parent)
+        self.position += self.velocity*dt
+        self.quaternion = self.quaternion.rotate(self.angular_velocity*dt)
+
+    ## Properties
+    @property
+    def velocity(self):
+        return self._velocity
+    @velocity.setter
+    def velocity(self,value):
+        self._velocity = np.array(value)
+    @property
+    def angular_velocity(self):
+        return self._angular_velocity
+    @angular_velocity.setter
+    def angular_velocity(self,value):
+        self._angular_velocity = np.array(value)
+        
