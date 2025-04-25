@@ -4,6 +4,7 @@ import pygame as pg
 class UserInput:
 
     def __init__(self):
+        self.view_minmax = (-80.0,80.0)
         self.view_sensitivity = np.array([60.0, 60.0, 60.0])
         self.view_rotation = np.array([0.0, 0.0, 0.0])
         self.input_direction = np.array([0.0, 0.0, 0.0])
@@ -53,6 +54,8 @@ class UserInput:
             self.view_rotation[2] += self.view_sensitivity[2]*dt
         if keys[key_bindings['rotate_right']]:
             self.view_rotation[2] -= self.view_sensitivity[2]*dt
+        self.view_rotation[0] = min(max(self.view_rotation[0],self.view_minmax[0]),self.view_minmax[1])
+        self.view_rotation[1] = min(max(self.view_rotation[1],self.view_minmax[0]),self.view_minmax[1])
 
         self.input_direction = np.array([0.0, 0.0, 0.0])
         if keys[key_bindings['move_forward']]:

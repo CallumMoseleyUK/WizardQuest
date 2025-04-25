@@ -2,7 +2,7 @@ import numpy as np
 import math
 
 class Quat(np.ndarray):
-   
+
     def __new__(cls, input_array=[1.0,0.0,0.0,0.0]):
             return np.asarray(input_array).view(cls)
     
@@ -23,7 +23,8 @@ class Quat(np.ndarray):
         return self.rotate_by_quat(Quat.angle_axis_to_quat(np.array(angle_tensor)))
     
     def rotate_by_quat(self,rotation_quaternion):
-        return self*rotation_quaternion
+        #return self*rotation_quaternion
+        return rotation_quaternion*self
     
     def normalize(self):
         mag = self.norm()
@@ -43,9 +44,9 @@ class Quat(np.ndarray):
     def y_axis(self):
         ''' Returns the vector axis pointing in the local y direction'''
         q0,q1,q2,q3 = self
-        return np.array([2*(q1*q2+q3*q0), 1-2*(q1**2+q3**2), 2*(q2*q3-q1*q0)])
+        return np.array([2*(q1*q2+q3*q0), (1-2*(q1**2+q3**2)), 2*(q2*q3-q1*q0)])
     def z_axis(self):
-        ''' Returns the vector axis pointing in the local z direction'''
+        ''' Returns the vector axis pointing in the local z (up) direction'''
         q0,q1,q2,q3 = self
         return np.array([2*(q1*q3-q2*q0), 2*(q2*q3+q1*q0), 1-2*(q1**2+q2**2)])
     
@@ -68,7 +69,7 @@ class Quat(np.ndarray):
         '''Converts an angle and axis to a quaternion (vector length is the angle)'''
         angle = np.linalg.norm(angle_tensor)
         if angle<=0.0:
-            return Quat([1,0,0,0])
+            return Quat()
         
         axis = angle_tensor/angle
         [mx,my,mz] = axis

@@ -95,6 +95,11 @@ class Model:
     
 class RenderObject:
 
+    _world_to_screen_quaternion = mqq.Quat.euler_to_quat(roll=0.0,
+                                                         pitch=0.0,
+                                                         yaw=0.0,
+                                                         bDegrees=True)
+    
     def __init__(self,render_model,shader):
         self.render_model = render_model
         self.shader = shader
@@ -151,12 +156,12 @@ class RenderObject:
         GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, shader_data["buffer"]["outline"])
         GL.glDrawElements(GL.GL_LINES, len(outline_cube_indices), GL.GL_UNSIGNED_INT, None)
 
-        viewport_quaternion_world = viewport.quaternion
-        screen_quaternion = quaternion#.rotate_by_quat(viewport_quaternion_world)
+        viewport_quaternion_world = viewport.quaternion.rotate_by_quat(RenderObject._world_to_screen_quaternion)
+        object_quaternion = quaternion#.rotate_by_quat(viewport_quaternion_world)
         
         viewport_rotation_matrix = viewport_quaternion_world.rotation_matrix()
         screen_rotation_matrix = np.dot(viewport_rotation_matrix.T,
-                                        screen_quaternion.rotation_matrix())
+                                        object_quaternion.rotation_matrix())
 
         x,y,z = np.dot(viewport_rotation_matrix.T,
                        position - viewport.position)
