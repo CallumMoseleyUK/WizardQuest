@@ -66,7 +66,6 @@ if __name__ == '__main__':
     ## Initialise world
     world = World()
     viewport = Viewport()
-    viewport.position[0] = -6.0
 
     ## Initialise player
     player_pawn = Pawn()
@@ -92,7 +91,7 @@ if __name__ == '__main__':
     first_entity.position = [
         0.0,
         0.0,
-        1.0
+        0.0
         ]
     
     world.spawn_entity(first_entity)
@@ -100,6 +99,7 @@ if __name__ == '__main__':
     ## Add a force
     force_duration = -3.0
     force = force_effect.Force(duration=force_duration)
+    #force.force[2] = 0.5
     first_entity.add_effect(force)
 
     ## Game loop
@@ -113,7 +113,7 @@ if __name__ == '__main__':
         player_controller.apply_input_direction(user_input.input_direction,viewport)
 
         P,I,D = 1.0, 1.0, 1.0
-        force.force = P*(viewport.x_axis()*8.0 +player_pawn.position - first_entity.position) + D*(-first_entity.velocity)
+        #force.force = P*(viewport.x_axis()*8.0 +player_pawn.position - first_entity.position) + D*(-first_entity.velocity)
 
         world.update(dt)
         dt = display.update()
@@ -121,7 +121,10 @@ if __name__ == '__main__':
         
         #print('velocity: ', first_entity.velocity)
         #print('angular_velocity: ', first_entity.angular_velocity)
-        print(viewport.x_axis())
+        print('forward:', viewport.x_axis())
+        #print('left:', viewport.y_axis())
+        #print('up:', viewport.z_axis())
+        #print('input rotation:', user_input.view_rotation)
 
     pg.quit()
 

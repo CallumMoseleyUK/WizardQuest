@@ -10,5 +10,6 @@ class PlayerController(Controller):
     def apply_input_direction(self,input_direction,viewport):
         if not self.pawn: return
         world_direction = np.dot(viewport.rotation_matrix(),input_direction)
+        print('world_direction: ', world_direction)
         self.pawn.move(world_direction)
 

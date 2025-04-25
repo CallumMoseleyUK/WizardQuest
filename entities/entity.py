@@ -28,8 +28,6 @@ class Entity:
     def draw(self,viewport,parent=None):
         draw_position = self.position
         draw_quat = self.quaternion
-        if parent!=None:
-            draw_position += parent.position*0
         if self.render_object != None:
             self.render_object.draw(viewport,draw_position,draw_quat)
         for child in self._child_entities:
