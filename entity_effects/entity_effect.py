@@ -1,14 +1,18 @@
 import numpy as np
 from entities.entity import Entity
-class EntEffect:
-    def __init__(self):
-        self.timer = 0.0
-        self.duration = -1.0
 
-    def update(self,entity,dt):
+class EntEffect:
+    '''
+    Base class for effects applied to entities. Duration<0 means indefinite duration
+    '''
+    def __init__(self,duration=-1.0):
+        self.timer = 0.0
+        self.duration = duration
+
+    def update(self,dt,entity):
         if self.duration >= 0.0:
             self.timer += dt
-            if self.timer > self.duration:
+            if self.duration >= 0.0 and self.timer > self.duration:
                 entity.remove_effect(self)
 
     def added(self,entity):

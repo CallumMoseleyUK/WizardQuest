@@ -112,6 +112,6 @@ class Quat(np.ndarray):
         qy = cosr*sinp*cosy + sinr*cosp*siny
         qz = cosr*cosp*siny - sinr*sinp*cosy
 
-        return Quat([qw,qx,qy,qz])
+        return Quat([qw,qx,qy,qz]).normalize()
         
 

@@ -2,6 +2,7 @@ import pygame as pg
 import numpy as np
 from asset_manager import AssetManager
 import entities.entity as ent
+import entities.physicsentity as phys_ent
 from entities.viewport import *
 from entities.pawn import Pawn
 from models.model import RenderObject
@@ -10,6 +11,8 @@ from display import Display
 import math
 from userinput import UserInput
 from controllers.playercontroller import PlayerController
+import entity_effects.force as force_effect
+
 try:
     import OpenGL.GL as GL
     import OpenGL.GLU as GLU
@@ -36,45 +39,6 @@ def init_key_bindings():
     key_bindings['rotate_left'] = pg.K_LEFT
     key_bindings['rotate_right'] = pg.K_RIGHT
     return key_bindings
-
-
-
-# def handle_event_queue(viewport):
-#     # poll for events
-#     # pg.QUIT event means the user clicked X to close your window
-#     bRunning = True
-#     for event in pg.event.get():
-#         if event.type == pg.QUIT:
-#             bRunning = False
-#     # Input
-#     keys = pg.key.get_pressed()
-    
-#     rspeed = 0.05
-#     speed = 0.2
-#     if keys[key_bindings['move_forward']]:
-#         viewport.position += speed*viewport.x_axis()
-#     if keys[key_bindings['move_backward']]:
-#         viewport.position -= speed*viewport.x_axis()
-#     if keys[key_bindings['move_left']]:
-#         viewport.position += speed*viewport.y_axis()
-#     if keys[key_bindings['move_right']]:
-#         viewport.position -= speed*viewport.y_axis()
-#     if keys[key_bindings['move_up']]:
-#         viewport.position[2] += speed
-#     if keys[key_bindings['move_down']]:
-#         viewport.position[2] -= speed
-#     if keys[key_bindings['rotate_up']]:
-#         viewport.rotate([0.0,-rspeed,0.0])
-#     if keys[key_bindings['rotate_down']]:
-#         viewport.rotate([0.0,rspeed,0.0])
-#     if keys[key_bindings['rotate_left']]:
-#         viewport.rotate([0.0,0.0,rspeed])
-#     if keys[key_bindings['rotate_right']]:
-#         viewport.rotate([0.0,0.0,-rspeed])
-#     if keys[key_bindings['exit']]:
-#         bRunning = False
-
-#     return bRunning
 
 def exit_event():
     print('Exit event called')
@@ -113,7 +77,7 @@ if __name__ == '__main__':
     world.spawn_entity(player_pawn)
 
     ## Add an entity
-    first_entity = ent.DynamicEntity()
+    first_entity = phys_ent.PhysicsEntity()
     first_entity.render_object = asset_manager.load_render_object(None,None)
     first_entity.velocity = [
         0.0,
@@ -121,17 +85,22 @@ if __name__ == '__main__':
         0.0
         ]
     first_entity.angular_velocity = [
-        0.2,
-        0.2,
-        0.2
-        ]
-    first_entity.position = [
         0.0,
         0.0,
         0.0
         ]
+    first_entity.position = [
+        0.0,
+        0.0,
+        1.0
+        ]
     
     world.spawn_entity(first_entity)
+    
+    ## Add a force
+    force_duration = -3.0
+    force = force_effect.Force(duration=force_duration)
+    first_entity.add_effect(force)
 
     ## Game loop
     running = True
@@ -143,12 +112,16 @@ if __name__ == '__main__':
                               user_input.view_rotation[2], bDegrees=True)
         player_controller.apply_input_direction(user_input.input_direction,viewport)
 
+        P,I,D = 1.0, 1.0, 1.0
+        force.force = P*(viewport.x_axis()*8.0 +player_pawn.position - first_entity.position) + D*(-first_entity.velocity)
+
         world.update(dt)
         dt = display.update()
         world.draw(viewport)
-        #print('View [roll,pitch,yaw]: ', user_input.view_rotation)
-        #print('Input direction: ',user_input.input_direction)
-        #print('first_entity pos: ',first_entity.position)
+        
+        #print('velocity: ', first_entity.velocity)
+        #print('angular_velocity: ', first_entity.angular_velocity)
+        print(viewport.x_axis())
 
     pg.quit()
 

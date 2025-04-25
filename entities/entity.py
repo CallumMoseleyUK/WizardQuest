@@ -9,7 +9,7 @@ class Entity:
 
     def __init__(self):
         self._quaternion_correction_counter = 0
-        self._quaternion_correction_frame_limit = 0 #number of orientation changes before quaternion normalization
+        self._quaternion_correction_frame_limit = 100 #number of orientation changes before quaternion normalization
 
         self._position = np.array([0.0,0.0,0.0])
         self._quaternion = mqq.Quat()
@@ -20,8 +20,8 @@ class Entity:
         self._render_object = None
 
     def update(self,dt,parent=None):
-        #for effect in self._effects:
-        #    effect.update(dt,self)
+        for effect in self._effects:
+            effect.update(dt,self)
         for child in self._child_entities:
             child.update(dt,parent=self)
 
@@ -36,10 +36,10 @@ class Entity:
             child.draw(viewport,parent=self)
 
     def add_effect(self,effect):
-        self.effects.add(effect)
+        self._effects.append(effect)
         effect.added(self)
-    def add_effect(self,effect):
-        self.effects.remove(effect)
+    def remove_effect(self,effect):
+        self._effects.remove(effect)
         effect.removed(self)
     
     
@@ -88,7 +88,6 @@ class Entity:
         else:
             self._quaternion = self._quaternion.normalize()
             self._quaternion_correction_counter = 0
-
     @property
     def rotation(self):
         '''Format: (roll, pitch, yaw)'''
