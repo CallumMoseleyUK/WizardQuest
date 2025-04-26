@@ -71,13 +71,28 @@ if __name__ == '__main__':
     player_pawn = Pawn()
     player_pawn.add_child(viewport)
     player_controller = PlayerController(player_pawn)
-    player_pawn.position[0] = -6.0
+    player_pawn.position[0] = 0.0
     world.spawn_entity(player_controller)
     world.spawn_entity(player_pawn)
 
     ## Add an entity
-    first_entity = phys_ent.PhysicsEntity()
-    first_entity.render_object = asset_manager.load_render_object(None,None)
+    ent_list = []
+    pos = np.array([[0.0,0.0,6.0],
+                    [-6.0,0.0,0.0],
+                    [0.0,6.0,0.0],
+                    [0.0,-6.0,0.0]])
+    pos = np.array([[6.0,0.0,0.0],
+                    [6.0,1.0,0.0]])
+    for i in range(len(pos)):
+        e = phys_ent.PhysicsEntity()
+        e.render_object = asset_manager.load_render_object(None,None)
+        e.position = pos[i]
+        e.angular_velocity[0] = 0.0
+        ent_list.append(e)
+        world.spawn_entity(e)
+    #first_entity = phys_ent.PhysicsEntity()
+    #first_entity.render_object = asset_manager.load_render_object(None,None)
+    first_entity = ent_list[0]
     first_entity.velocity = [
         0.0,
         0.0,
@@ -88,13 +103,6 @@ if __name__ == '__main__':
         0.0,
         0.0
         ]
-    first_entity.position = [
-        0.0,
-        0.0,
-        0.0
-        ]
-    
-    world.spawn_entity(first_entity)
     
     ## Add a force
     force_duration = -3.0
@@ -122,7 +130,7 @@ if __name__ == '__main__':
         #print('velocity: ', first_entity.velocity)
         #print('angular_velocity: ', first_entity.angular_velocity)
         print('forward:', viewport.x_axis())
-        #print('left:', viewport.y_axis())
+        print('left:', viewport.y_axis())
         #print('up:', viewport.z_axis())
         #print('input rotation:', user_input.view_rotation)
 

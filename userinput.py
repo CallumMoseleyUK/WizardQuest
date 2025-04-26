@@ -56,6 +56,7 @@ class UserInput:
             self.view_rotation[2] -= self.view_sensitivity[2]*dt
         self.view_rotation[0] = min(max(self.view_rotation[0],self.view_minmax[0]),self.view_minmax[1])
         self.view_rotation[1] = min(max(self.view_rotation[1],self.view_minmax[0]),self.view_minmax[1])
+        self.view_rotation[2] = self.view_rotation[2]%360.0
 
         self.input_direction = np.array([0.0, 0.0, 0.0])
         if keys[key_bindings['move_forward']]:
@@ -66,10 +67,10 @@ class UserInput:
             self.input_direction[1] += 1.0
         if keys[key_bindings['move_right']]:
             self.input_direction[1] -= 1.0
-        #if keys[key_bindings['move_up']]:
-        #    self.move_direction[2] += 1.0
-        #if keys[key_bindings['move_down']]:
-        #    self.move_direction[2] -= 1.0
+        if keys[key_bindings['move_up']]:
+            self.input_direction[2] += 1.0
+        if keys[key_bindings['move_down']]:
+            self.input_direction[2] -= 1.0
         if np.vecdot(self.input_direction,self.input_direction) > 0:
             self.input_direction = self.input_direction/np.linalg.norm(self.input_direction)
         
