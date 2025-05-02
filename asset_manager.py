@@ -1,5 +1,6 @@
-from models.model import Model,RenderObject
-from models.shaders import Shader
+from models.mesh import Mesh
+from graphics.shader import Shader
+from graphics.render_engine import RenderModel
 
 class AssetManager:
     '''
@@ -10,23 +11,24 @@ class AssetManager:
     def __init__(self,display=None):
         self.display = display
 
-    def load_model(self,model_path=None):
-        if model_path==None:
-            return Model()
+    def load_mesh(self,mesh_path=None):
+        if mesh_path==None:
+            return Mesh()
         else: pass #load from file here
 
     def load_shader(self,shader_path=None):
         if shader_path==None:
-            return Shader(screen_resolution=self.display.screen_resolution,
-                          field_of_view=self.display.field_of_view,
-                          znear=self.display.znear,
-                          zfar=self.display.zfar)
+            # return Shader(screen_resolution=self.display.screen_resolution,
+            #                 field_of_view=self.display.field_of_view,
+            #                 znear=self.display.znear,
+            #                 zfar=self.display.zfar)
+            return Shader()
         else: pass #load from file here
 
-    def load_render_object(self,model_path=None,shader_path=None):
-        model = self.load_model(model_path)
+    def load_render_model(self,mesh_path=None,shader_path=None):
+        mesh = self.load_mesh(mesh_path)
         shader = self.load_shader(shader_path)
-        return RenderObject(model,shader)
+        return RenderModel(mesh,shader)
             
     @property
     def display(self):

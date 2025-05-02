@@ -17,7 +17,7 @@ class Entity:
         self._effects = []
 
         self._child_entities = []
-        self._render_object = None
+        self._render_model = None
 
     def update(self,dt,parent=None):
         for effect in self._effects:
@@ -28,8 +28,8 @@ class Entity:
     def draw(self,viewport,parent=None):
         draw_position = self.position
         draw_quat = self.quaternion
-        if self.render_object != None:
-            self.render_object.draw(viewport,draw_position,draw_quat)
+        if self.render_model != None:
+            self.render_model.draw(viewport,draw_position,draw_quat)
         for child in self._child_entities:
             child.draw(viewport,parent=self)
 
