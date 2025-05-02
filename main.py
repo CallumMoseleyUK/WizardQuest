@@ -5,7 +5,6 @@ import entities.entity as ent
 import entities.physicsentity as phys_ent
 from entities.viewport import *
 from entities.pawn import Pawn
-from models.model import RenderObject
 from world import World
 from display import Display
 import math
@@ -59,6 +58,7 @@ if __name__ == '__main__':
     display = Display(screen_resolution=screen_resolution,
                       framerate=framerate,
                       field_of_view=field_of_view)
+    display.init_render_engine()
     
     ## Initialise asset management
     asset_manager = AssetManager(display)
@@ -81,11 +81,11 @@ if __name__ == '__main__':
                     [-6.0,0.0,0.0],
                     [0.0,6.0,0.0],
                     [0.0,-6.0,0.0]])
-    pos = np.array([[6.0,0.0,0.0],
-                    [6.0,1.0,0.0]])
+    # pos = np.array([[6.0,0.0,0.0],
+    #                 [6.0,1.0,0.0]])
     for i in range(len(pos)):
         e = phys_ent.PhysicsEntity()
-        e.render_object = asset_manager.load_render_object(None,None)
+        e.render_model = asset_manager.load_render_model(None,None)
         e.position = pos[i]
         e.angular_velocity[0] = 0.0
         ent_list.append(e)
@@ -124,6 +124,7 @@ if __name__ == '__main__':
         #force.force = P*(viewport.x_axis()*8.0 +player_pawn.position - first_entity.position) + D*(-first_entity.velocity)
 
         world.update(dt)
+        display.change_view(viewport.position, viewport.x_axis(), viewport.z_axis())
         dt = display.update()
         world.draw(viewport)
         

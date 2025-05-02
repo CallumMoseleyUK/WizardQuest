@@ -1,24 +1,30 @@
-from models.model import Mesh
+from models.mesh import Mesh
+from graphics.shader import Shader
 from OpenGL.GL import *
-
+#import OpenGL.GLU as glu
+import glm
 class RenderEngine:
 
     def __init__(self):
         self.models = []
 
-    def init_opengl(self):
-		glClearColor(0.0,0,0.4,0)
-		glDepthFunc(GL_LESS)
-		glEnable(GL_DEPTH_TEST)
-		glEnable(GL_CULL_FACE)
+    def init_context(self):
+        self.models = []
 
-    def add_model(self,model)
-        self.models.append(model)
+    def init_opengl(self):
+        glClearColor(0.0,0,0.4,0)
+        glDepthFunc(GL_LESS)
+        glEnable(GL_DEPTH_TEST)
+        glEnable(GL_CULL_FACE)
+
+    def add_model(self,model):
+        self.models.append(model.make_context())
     
 class RenderModel:
 
-    def __init__(self):
-        self.mesh = Mesh()
+    def __init__(self,mesh,shader):
+        self.mesh = mesh
+        self.shader = shader
 
     def make_context(self):
         self.load_shader()
@@ -27,22 +33,14 @@ class RenderModel:
         return self
         
     def load_shader(self):
-        self.shader = Shader()
-        self.shader.initShaderFromGLSL(
-            ["glsl/tu01/vertex.glsl"], ["glsl/tu01/fragment.glsl"])
-        self.MVP_ID = glGetUniformLocation(self.shader.program, "MVP")
+        pass
 
     def load_object(self):
-        self.vertexbuffer = glGenBuffers(1)
-        glBindBuffer(GL_ARRAY_BUFFER, self.vertexbuffer)
-        glBufferData(GL_ARRAY_BUFFER, len(self.vertex_data)*4, 
-            (GLfloat * len(self.vertex_data))(*self.vertex_data), GL_STATIC_DRAW)
+        pass
 
-        self.vertexLen = len(self.vertex_data)
-
-        self.colorbuffer = glGenBuffers(1)
-        glBindBuffer(GL_ARRAY_BUFFER, self.colorbuffer)
-        glBufferData(GL_ARRAY_BUFFER, len(self.color_data)*4, (GLfloat *
-                                                               len(self.color_data))(*self.color_data), GL_STATIC_DRAW)
     def load_texture(self):
-        self.texture = None
+        pass
+
+    def draw(self, MVP,View,Projection):
+        pass#glPushMatrix()
+        

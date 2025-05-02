@@ -1,8 +1,12 @@
 try:
-    import OpenGL.GL as GL
+    import OpenGL.GL as gl
 except ImportError:
     print("pyopengl missing. The GLCUBE example requires: pyopengl numpy")
     raise SystemExit
+import os
+import ctypes
+import numpy as np
+import mathquest.matrix as mqm
 
 class Shader:
 
@@ -26,7 +30,7 @@ class Shader:
         # create program
         self.program= gl.glCreateProgram() # pylint: disable=E1111
         #print('create program ',self.program)
-        printOpenGLError()
+        #printOpenGLError()
 
         # vertex shader
         #print('compile vertex shader...')
@@ -37,7 +41,7 @@ class Shader:
             err =  gl.glGetShaderInfoLog(self.vs) 
             raise Exception(err)  
         gl.glAttachShader(self.program, self.vs)
-        printOpenGLError()
+        #printOpenGLError()
 
         # fragment shader
         #print('compile fragment shader...')
@@ -48,18 +52,18 @@ class Shader:
             err =  gl.glGetShaderInfoLog(self.fs) 
             raise Exception(err)       
         gl.glAttachShader(self.program, self.fs)
-        printOpenGLError()
+        #printOpenGLError()
 
         #print('link...')
         gl.glLinkProgram(self.program)
         if(gl.GL_TRUE!=gl.glGetProgramiv(self.program, gl.GL_LINK_STATUS)):
             err =  gl.glGetShaderInfoLog(self.vs) 
             raise Exception(err)          
-        printOpenGLError()
+        #printOpenGLError()
 
     def begin(self):
         if gl.glUseProgram(self.program):
-            printOpenGLError()
+            print('glUseProgram failed')#printOpenGLError()
 
     def end(self):
         gl.glUseProgram(0)

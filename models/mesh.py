@@ -6,7 +6,7 @@ except ImportError:
 
 class Mesh:
     ''' Container for mesh data '''
-    g_vertex_buffer_data = [
+    vertex_data = [
             -1.0,-1.0,-1.0,
             -1.0,-1.0, 1.0,
             -1.0, 1.0, 1.0,
@@ -44,7 +44,7 @@ class Mesh:
             -1.0, 1.0, 1.0,
             1.0,-1.0, 1.0]
 
-    g_color_buffer_data = [ 
+    color_data = [ 
             0.583,  0.771,  0.014,
             0.609,  0.115,  0.436,
             0.327,  0.483,  0.844,

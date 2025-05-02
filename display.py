@@ -1,6 +1,8 @@
 import numpy as np
 import mathquest.matrix as mqm
+import glm
 import pygame as pg
+from graphics.render_engine import RenderEngine,RenderModel
 try:
     import OpenGL.GL as GL
 except ImportError:
@@ -15,17 +17,15 @@ class Display:
 
     def __init__(self,screen_resolution=(800,600),
                  framerate=60.0,
-                 field_of_view=75.0,
-                 znear=2.0,
-                 zfar=100.0,
+                 field_of_view=60.0,
+                 znear=0.1,
+                 zfar=1000.0,
                  caption='BoredomQuest',
                  icon_path='data/window_icon.png'):
     
-        self.screen_resolution = screen_resolution
+        self.render_engine = None
         self.framerate = framerate
-        self.field_of_view = field_of_view
-        self.znear = znear
-        self.zfar = zfar
+        self.resize(screen_resolution,field_of_view,znear,zfar)
         self.dt = round(1000.0/framerate)
 
         ## Initialise pg
@@ -46,6 +46,11 @@ class Display:
         self._screen = pg.display.set_mode(self.screen_resolution, pg.OPENGL | pg.DOUBLEBUF | pg.RESIZABLE)
         self._clock = pg.time.Clock()
 
+    def init_render_engine(self):
+        self.render_engine = RenderEngine()
+        self.render_engine.init_opengl()
+        self.render_engine.init_context()
+
     def set_fullscreen(self,bFullscreen=True):
         if bFullscreen==self._bFullscreen: return
         if bFullscreen:
@@ -53,6 +58,17 @@ class Display:
         else:
             pg.display.set_mode(self.screen_resolution, pg.OPENGL | pg.DOUBLEBUF)
         self._bFullscreen = bFullscreen
+
+    def resize(self,screen_resolution,fov,znear,zfar):
+        self.screen_resolution = screen_resolution
+        self.field_of_view = fov
+        self.znear = znear
+        self.zfar = zfar
+        if self.render_engine!=None:
+            self.render_engine.resize(screen_resolution[0],screen_resolution[1],fov,znear,zfar)
+
+    def change_view(self,position,direction,up):
+        self.render_engine.compute_view_matrices(position, direction, up)
 
     def update(self):
         pg.display.flip()
