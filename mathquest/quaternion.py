@@ -23,32 +23,46 @@ class Quat(np.ndarray):
         return self.rotate_by_quat(Quat.angle_axis_to_quat(np.array(angle_tensor)))
     
     def rotate_by_quat(self,rotation_quaternion):
-        #return self*rotation_quaternion
-        return rotation_quaternion*self
+        return self*rotation_quaternion
+        #return rotation_quaternion*self
     
     def normalize(self):
         mag = self.norm()
         if mag > 0:
             return self / mag
         else:
-            return Quat(0.0, 0.0, 0.0, 0.0)
+            return Quat()
         
     def invert(self):
         q = Quat([self[0],-self[1],-self[2],-self[3]])
         return q/np.vecdot(q,q)
     
+    # def x_axis(self):
+    #     ''' Returns the vector axis pointing in the local x direction'''
+    #     q0,q1,q2,q3 = self
+    #     return np.array([1-2*(q2**2+q3**2), 2*(q1*q2-q3*q0), 2*(q1*q3+q2*q0)])
+    
+    # def y_axis(self):
+    #     ''' Returns the vector axis pointing in the local y direction'''
+    #     q0,q1,q2,q3 = self
+    #     return np.array([2*(q1*q2+q3*q0), (1-2*(q1**2+q3**2)), 2*(q2*q3-q1*q0)])
+    # def z_axis(self):
+    #     ''' Returns the vector axis pointing in the local z direction'''
+    #     q0,q1,q2,q3 = self
+    #     return np.array([2*(q1*q3-q2*q0), 2*(q2*q3+q1*q0), 1-2*(q1**2+q2**2)])
     def x_axis(self):
         ''' Returns the vector axis pointing in the local x direction'''
         q0,q1,q2,q3 = self
-        return np.array([1-2*(q2**2+q3**2), 2*(q1*q2-q3*q0), 2*(q1*q3+q2*q0)])
+        return np.array([1-2*(q2**2+q3**2), 2*(q1*q2+q3*q0), 2*(q1*q3-q2*q0)])
+    
     def y_axis(self):
         ''' Returns the vector axis pointing in the local y direction'''
         q0,q1,q2,q3 = self
-        return np.array([2*(q1*q2+q3*q0), (1-2*(q1**2+q3**2)), 2*(q2*q3-q1*q0)])
+        return np.array([2*(q1*q2-q3*q0), (1-2*(q1**2+q3**2)), 2*(q2*q3+q1*q0)])
     def z_axis(self):
         ''' Returns the vector axis pointing in the local z direction'''
         q0,q1,q2,q3 = self
-        return np.array([2*(q1*q3-q2*q0), 2*(q2*q3+q1*q0), 1-2*(q1**2+q2**2)])
+        return np.array([2*(q1*q3+q2*q0), 2*(q2*q3-q1*q0), 1-2*(q1**2+q2**2)])
     
     def rotation_matrix(self,bInverse=False):
         if bInverse: q = self.invert()
@@ -57,7 +71,7 @@ class Quat(np.ndarray):
                         [q.x_axis(),
                         q.y_axis(),
                         q.z_axis()]
-                        )
+                        ).T
 
     def perspective_matrix(self):
         M = np.eye(4,4)
@@ -76,7 +90,7 @@ class Quat(np.ndarray):
         return Quat([math.cos(angle/2),
                   math.sin(angle/2)*mx,
                   math.sin(angle/2)*my,
-                  math.sin(angle/2)*mz])
+                  math.sin(angle/2)*mz])#.invert()
 
     def to_euler(quat,bDegrees=False):
         '''Converts a quaternion to Euler angles'''
@@ -101,6 +115,7 @@ class Quat(np.ndarray):
             pitch = pitch * math.pi/180.0
             yaw = yaw * math.pi/180.0
 
+        #return Quat().rotate([0.0,0.0,yaw]).rotate([0.0,pitch,0.0]).rotate([roll,0.0,0.0])
         cosr = math.cos(roll*0.5)
         sinr = math.sin(roll*0.5)
         cosp = math.cos(pitch*0.5)

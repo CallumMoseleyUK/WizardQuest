@@ -4,18 +4,23 @@ import pygame as pg
 class UserInput:
 
     def __init__(self):
-        self.view_minmax = (-80.0,80.0)
-        self.view_sensitivity = np.array([60.0, 60.0, 60.0])
+        self.init_key_bindings()
+        self.init_settings()
         self.view_rotation = np.array([0.0, 0.0, 0.0])
         self.input_direction = np.array([0.0, 0.0, 0.0])
-        self._exit_function = lambda : print('User input exit function not set') 
-
-        self.key_bindings = self.init_key_bindings()
+        self._exit_function = lambda : print('User exit command called.') 
 
     def set_exit_function(self,exit_function):
         self._exit_function = exit_function
 
+    def init_settings(self):
+        self.view_minmax = (-80.0,80.0)
+        self.view_sensitivity = np.array([60.0, 60.0, 60.0])
+
     def init_key_bindings(self):
+        self.key_bindings = self.get_key_bindings()
+
+    def get_key_bindings(self):
         key_bindings = {}
         key_bindings['exit'] = pg.K_ESCAPE
         key_bindings['move_forward'] = pg.K_w
@@ -28,6 +33,8 @@ class UserInput:
         key_bindings['rotate_down'] = pg.K_UP
         key_bindings['rotate_left'] = pg.K_LEFT
         key_bindings['rotate_right'] = pg.K_RIGHT
+        key_bindings['roll_positive'] = pg.K_p
+        key_bindings['roll_negative'] = pg.K_o
         return key_bindings
     
     def update(self,dt):
@@ -46,6 +53,11 @@ class UserInput:
         # Input
         keys = pg.key.get_pressed()
 
+        if keys[key_bindings['roll_positive']]:
+            self.view_rotation[0] += self.view_sensitivity[0]*dt
+        if keys[key_bindings['roll_negative']]:
+            self.view_rotation[0] -= self.view_sensitivity[0]*dt
+            
         if keys[key_bindings['rotate_up']]:
             self.view_rotation[1] -= self.view_sensitivity[1]*dt
         if keys[key_bindings['rotate_down']]:

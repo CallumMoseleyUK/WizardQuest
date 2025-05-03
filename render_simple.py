@@ -6,7 +6,7 @@ import pygame as pg
 from graphics.render_engine import RenderEngine,RenderModel
 from models.mesh import Mesh
 from graphics.shader import Shader
-
+from userinput import UserInput
 try:
     from OpenGL.GL import *
     from OpenGL.GLU import *
@@ -23,7 +23,7 @@ class SimpleRender:
         self.load_object()
         self.load_texture()
 
-        self.position = np.array([0,0,0])
+        self.position = np.array([0.0,0.0,0.0])
 
     def update(self):
         pass
@@ -67,8 +67,6 @@ class SimpleRender:
         self.shader.end()
 
 
-
-
 if __name__ == '__main__':
 
 
@@ -98,7 +96,7 @@ if __name__ == '__main__':
     _screen = pg.display.set_mode(screen_resolution, pg.OPENGL | pg.DOUBLEBUF | pg.RESIZABLE)
     _clock = pg.time.Clock()
 
-    
+    user_input = UserInput()
 
     ### Init view
 
@@ -121,20 +119,57 @@ if __name__ == '__main__':
     cubes = [SimpleRender()]
     projection_matrix = glm.perspective(glm.radians(fov), float(width) / float(height), znear, zfar)
 
+    #_world_to_screen_quat = Quat.euler_to_quat(.0,.0,90.0,bDegrees=True)
+    #_world_to_screen_matrix = _world_to_screen_quat.rotation_matrix()
+
     #transformation order: scale, rotate, translate
-    for t in range(1000):
+    running = True
+    dt = 10
+    t = 0.0
+    view_position = glm.vec3([-5.0, 0.0, 0.0])
+    view_quat = Quat()
+    while running:
+        running = user_input.update(dt/1000)
+        t+=dt/1000
+        # view_position += glm.vec3([-user_input.input_direction[1],
+        #                           user_input.input_direction[2],
+        #                           -user_input.input_direction[0]])*0.2
+        # view_quat = Quat.euler_to_quat(user_input.view_rotation[1],
+        #                                user_input.view_rotation[2],
+        #                                user_input.view_rotation[0],
+        #                                bDegrees=True)
+        view_quat = Quat.euler_to_quat(user_input.view_rotation[0],
+                                       user_input.view_rotation[1],
+                                       user_input.view_rotation[2],
+                                       bDegrees=True)
+        view_position += glm.vec3(user_input.input_direction)*0.2
+        look_position = view_position + glm.vec3(view_quat.x_axis())
+        up_axis = (0,0,1)#glm.vec3(view_quat.z_axis())
+        print('user angle: ', user_input.view_rotation)
+        print('forward_axis: ',view_quat.x_axis())
+        print('left_axis: ',view_quat.y_axis())
+        print('up_axis: ',view_quat.z_axis())
+        
 
-        view_position = glm.vec3([0,0,5.0])
-        look_position = view_position + glm.vec3(-view_quat.z_axis())
-        up_axis = (0,1,0)
+        f = 0.8
+        osc = 0.0#np.sin(f*6.28*t)
+        p = [[0.0, 0.0, osc],
+             [0.0, 0.0, 0.0]]
+
+        ### --- rendering stuff
         view_matrix = glm.lookAt(view_position,look_position,up_axis)
-        model_matrix = glm.translate(glm.vec3(cubes[0].position))
-        MVP = projection_matrix * view_matrix * model_matrix
-        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-        #cubes[0].position = -5 + np.sin(float(t)/300)*2
 
-        cubes[0].draw(MVP)
-        #cubes[1].draw(np.array([0.0,0.0,-5.0]),view_quat,object_position,object_quat)
+        i = 0
+        for cube in cubes:
+            cube.position = np.array(p[i])
+            i+=1
+            model_matrix = glm.translate(glm.vec3(cube.position))
+            MVP = projection_matrix * view_matrix * model_matrix
+            glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+
+            cube.draw(MVP)
+        # ----- end of rendering stuff
+
         pg.display.flip()
-        pg.time.wait(10)
+        pg.time.wait(dt)
     pg.quit()
