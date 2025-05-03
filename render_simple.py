@@ -107,20 +107,9 @@ if __name__ == '__main__':
     glDepthFunc(GL_LESS)
     glEnable(GL_DEPTH_TEST)
     glEnable(GL_CULL_FACE)
-
-    # Multiply quaternion with current modelview matrix    
-    #glMultMatrixf(view_quat.perspective_matrix())
-
-    # Some other transformations
-    #glTranslatef(-0.5, -0.5, -0.5)
-
-    # Draw something, i.e. cube
-
-    cubes = [SimpleRender()]
     projection_matrix = glm.perspective(glm.radians(fov), float(width) / float(height), znear, zfar)
 
-    #_world_to_screen_quat = Quat.euler_to_quat(.0,.0,90.0,bDegrees=True)
-    #_world_to_screen_matrix = _world_to_screen_quat.rotation_matrix()
+    cubes = [SimpleRender(),SimpleRender()]
 
     #transformation order: scale, rotate, translate
     running = True
@@ -152,7 +141,7 @@ if __name__ == '__main__':
         
 
         f = 0.8
-        osc = 0.0#np.sin(f*6.28*t)
+        osc = np.sin(f*6.28*t)
         p = [[0.0, 0.0, osc],
              [0.0, 0.0, 0.0]]
 
@@ -160,13 +149,13 @@ if __name__ == '__main__':
         view_matrix = glm.lookAt(view_position,look_position,up_axis)
 
         i = 0
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
         for cube in cubes:
             cube.position = np.array(p[i])
-            i+=1
+            i=(i+1)%len(cubes)
             model_matrix = glm.translate(glm.vec3(cube.position))
+            
             MVP = projection_matrix * view_matrix * model_matrix
-            glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-
             cube.draw(MVP)
         # ----- end of rendering stuff
 
