@@ -20,10 +20,9 @@ class Display:
                  field_of_view=60.0,
                  znear=0.1,
                  zfar=1000.0,
-                 caption='BoredomQuest',
+                 caption='WizardQuest',
                  icon_path='data/window_icon.png'):
     
-        self.render_engine = None
         self.framerate = framerate
         self.resize(screen_resolution,field_of_view,znear,zfar)
         self.dt = round(1000.0/framerate)
@@ -47,9 +46,7 @@ class Display:
         self._clock = pg.time.Clock()
 
     def init_render_engine(self):
-        self.render_engine = RenderEngine()
-        self.render_engine.init_opengl()
-        self.render_engine.init_context()
+        RenderEngine.init(self.field_of_view,self.screen_resolution,self.znear,self.zfar)
 
     def set_fullscreen(self,bFullscreen=True):
         if bFullscreen==self._bFullscreen: return
@@ -64,11 +61,11 @@ class Display:
         self.field_of_view = fov
         self.znear = znear
         self.zfar = zfar
-        if self.render_engine!=None:
-            self.render_engine.resize(screen_resolution[0],screen_resolution[1],fov,znear,zfar)
+        if RenderEngine.bInitialized:
+            RenderEngine.resize_screen(fov,screen_resolution[0],screen_resolution[1],znear,zfar)
 
-    def change_view(self,position,direction,up):
-        self.render_engine.compute_view_matrices(position, direction, up)
+    def set_view(self,position,direction,up_axis):
+        RenderEngine.set_view(position, direction, up_axis)
 
     def update(self):
         pg.display.flip()

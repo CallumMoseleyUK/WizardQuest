@@ -5,40 +5,55 @@ import glm
 
 class RenderEngine:
 
-    def __init__(self,field_of_view,screen_resolution,znear,zfar):
+    bInitialized = False
+    models = []
+
+    @staticmethod
+    def init(field_of_view,screen_resolution,znear,zfar):
         width,height = screen_resolution
         if height<=0:
             print('RenderEngine screen height must be greater than 0.')
             return
-        self.resize_screen(field_of_view,width,height,znear,zfar)
-        self.init_opengl()
-        self.models = []
+        RenderEngine.resize_screen(field_of_view,width,height,znear,zfar)
+        RenderEngine.set_view((0,0,0),(1,0,0),up_axis=(0,0,1))
+        RenderEngine.init_opengl()
+        RenderEngine.models = []
+        RenderEngine.bInitialized = True
 
-    def resize_screen(self,field_of_view,width,height,znear,zfar):
-        self.projection_matrix = glm.perspective(glm.radians(field_of_view),
+    @staticmethod
+    def resize_screen(field_of_view,width,height,znear,zfar):
+        RenderEngine.projection_matrix = glm.perspective(glm.radians(field_of_view),
                                                 float(width) / float(height),
                                                 znear, zfar)
-    def init_opengl(self):
+    @staticmethod
+    def init_opengl():
         glClearColor(0.0,0,0.4,0)
         glDepthFunc(GL_LESS)
         glEnable(GL_DEPTH_TEST)
         glEnable(GL_CULL_FACE)
 
-    def add_model(self,model):
+    @staticmethod
+    def add_model(model):
         model.make_context()
-        self.models.append(model)
+        RenderEngine.models.append(model)
     
+    @staticmethod
     def remove_model(self,model):
         model.removed()
-        self.models.remove(model)
-
-    def draw_scene(self, view_position, view_direction, up_axis=(0,0,1)):
+        RenderEngine.models.remove(model)
+    
+    @staticmethod
+    def set_view(view_position, view_direction, up_axis=(0,0,1)):
         view_position = glm.vec3(view_position)
         view_direction = glm.vec3(view_direction)
         look_position = view_position + view_direction
-        view_matrix = glm.lookAt(view_position,look_position,up_axis)
-        for model in self.models:
-            model.draw(view_matrix,self.projection_matrix)
+        RenderEngine.view_matrix = glm.lookAt(view_position,look_position,up_axis)
+
+    @staticmethod
+    def draw_scene():
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+        for model in RenderEngine.models:
+            model.draw(RenderEngine.view_matrix, RenderEngine.projection_matrix)
     
 class RenderModel:
 
@@ -78,8 +93,10 @@ class RenderModel:
 
     def update(self, new_position, new_rotation_matrix, new_scale=(1,1,1)):
         # order should be scale, rotate, translate. So trans_mat*rot_mat*scale_mat.
-        self.model_matrix = glm.translate(glm.mat4(new_rotation_matrix),
-                                           glm.vec3(new_position))
+        self.model_matrix = glm.mat4(glm.mat3(new_rotation_matrix))
+        self.model_matrix = glm.translate(self.model_matrix,glm.vec3(new_position))
+        #self.model_matrix = glm.translate(glm.mat4(1),glm.vec3(new_position))
+        #self.model_matrix = glm.mat4(glm.mat3(new_rotation_matrix))*self.model_matrix
 
     def get_MVP_matrix(self, view_matrix, projection_matrix):
         return projection_matrix * view_matrix * self.model_matrix

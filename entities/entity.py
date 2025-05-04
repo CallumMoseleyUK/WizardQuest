@@ -1,5 +1,6 @@
 import numpy as np
 import mathquest.quaternion as mqq
+from graphics.render_engine import RenderEngine
 #from models.model import RenderObject
 
 class Entity:
@@ -28,10 +29,18 @@ class Entity:
     def draw(self,viewport,parent=None):
         draw_position = self.position
         draw_quat = self.quaternion
-        if self.render_model != None:
-            self.render_model.draw(viewport,draw_position,draw_quat)
+        if self._render_model != None:
+            self._render_model.update(draw_position,draw_quat.rotation_matrix())
         for child in self._child_entities:
             child.draw(viewport,parent=self)
+
+    def add_render_model(self,render_model):
+        self._render_model = render_model
+        RenderEngine.add_model(render_model)
+        
+    def remove_render_model(self):
+        RenderEngine.remove_model(self._render_model)
+        self._render_model = None
 
     def add_effect(self,effect):
         self._effects.append(effect)

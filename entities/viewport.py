@@ -25,14 +25,7 @@ class Viewport(Entity):
 
     def rotation_matrix(self,bInverse=False):
         return self.quaternion.rotation_matrix(bInverse=bInverse)
-
-    def translation_matrix(self):
-        return mqm.translate(np.eye(3),self.position[0],self.position[1],self.position[2])
     
-    def perspective_matrix(self):
-        rot_matrix = np.eye(4,4)
-        rot_matrix[:3,:3] = self.rotation_matrix()
-        return mqm.translate(rot_matrix,self.position[0],self.position[1],self.position[2])
 
     # @property
     # def position(self):

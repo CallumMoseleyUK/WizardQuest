@@ -120,13 +120,6 @@ if __name__ == '__main__':
     while running:
         running = user_input.update(dt/1000)
         t+=dt/1000
-        # view_position += glm.vec3([-user_input.input_direction[1],
-        #                           user_input.input_direction[2],
-        #                           -user_input.input_direction[0]])*0.2
-        # view_quat = Quat.euler_to_quat(user_input.view_rotation[1],
-        #                                user_input.view_rotation[2],
-        #                                user_input.view_rotation[0],
-        #                                bDegrees=True)
         view_quat = Quat.euler_to_quat(user_input.view_rotation[0],
                                        user_input.view_rotation[1],
                                        user_input.view_rotation[2],
@@ -134,12 +127,7 @@ if __name__ == '__main__':
         view_position += glm.vec3(user_input.input_direction)*0.2
         look_position = view_position + glm.vec3(view_quat.x_axis())
         up_axis = (0,0,1)#glm.vec3(view_quat.z_axis())
-        print('user angle: ', user_input.view_rotation)
-        print('forward_axis: ',view_quat.x_axis())
-        print('left_axis: ',view_quat.y_axis())
-        print('up_axis: ',view_quat.z_axis())
         
-
         f = 0.8
         osc = np.sin(f*6.28*t)
         p = [[0.0, 0.0, osc],

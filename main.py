@@ -18,8 +18,11 @@ try:
 except ImportError:
     print("pyopengl missing. Requires: pyopengl numpy")
     raise SystemExit
-
 import os
+
+from graphics.render_engine import RenderModel,RenderEngine
+from models.mesh import Mesh
+from graphics.shader import Shader
 
 def cls():
     os.system('cls' if os.name=='nt' else 'clear')
@@ -46,9 +49,11 @@ if __name__ == '__main__':
     print('BoredomQuest running')
 
     ## Settings
-    screen_resolution = (800, 600)
+    screen_resolution = (800, 480)
     framerate = 60
     field_of_view = 60.0
+    znear = 0.1
+    zfar = 50.0
 
     ## Initialise input
     user_input = UserInput()
@@ -57,7 +62,9 @@ if __name__ == '__main__':
     ## Initialise display
     display = Display(screen_resolution=screen_resolution,
                       framerate=framerate,
-                      field_of_view=field_of_view)
+                      field_of_view=field_of_view,
+                      znear=znear,
+                      zfar=zfar)
     display.init_render_engine()
     
     ## Initialise asset management
@@ -81,27 +88,29 @@ if __name__ == '__main__':
                     [-6.0,0.0,0.0],
                     [0.0,6.0,0.0],
                     [0.0,-6.0,0.0]])
-    # pos = np.array([[6.0,0.0,0.0],
-    #                 [6.0,1.0,0.0]])
+    pos = np.array([[6.0,0.0,0.0]])
+
+    #dummy_model = RenderModel(Mesh(),Shader())
+    #dummy_model.update((5.0,0,0),viewport.rotation_matrix())
+    #RenderEngine.add_model(dummy_model)
+
     for i in range(len(pos)):
         e = phys_ent.PhysicsEntity()
-        e.render_model = asset_manager.load_render_model(None,None)
+        e.add_render_model(asset_manager.load_render_model(None,None))
         e.position = pos[i]
         e.angular_velocity[0] = 0.0
         ent_list.append(e)
         world.spawn_entity(e)
-    #first_entity = phys_ent.PhysicsEntity()
-    #first_entity.render_object = asset_manager.load_render_object(None,None)
     first_entity = ent_list[0]
     first_entity.velocity = [
         0.0,
-        0.0,
+        0.2,
         0.0
         ]
     first_entity.angular_velocity = [
-        0.2,
         0.0,
-        0.0
+        0.0,
+        0.2
         ]
     
     ## Add a force
@@ -124,16 +133,11 @@ if __name__ == '__main__':
         #force.force = P*(viewport.x_axis()*8.0 +player_pawn.position - first_entity.position) + D*(-first_entity.velocity)
 
         world.update(dt)
-        display.change_view(viewport.position, viewport.x_axis(), viewport.z_axis())
-        dt = display.update()
+        display.set_view(viewport.position, viewport.x_axis(), (0,0,1))
         world.draw(viewport)
+        dt = display.update()
         
-        #print('velocity: ', first_entity.velocity)
-        #print('angular_velocity: ', first_entity.angular_velocity)
-        print('forward:', viewport.x_axis())
-        print('left:', viewport.y_axis())
-        #print('up:', viewport.z_axis())
-        #print('input rotation:', user_input.view_rotation)
+        print('ent p: ',first_entity.position)
 
     pg.quit()
 
