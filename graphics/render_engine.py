@@ -1,5 +1,3 @@
-from models.mesh import Mesh
-from graphics.shader import Shader
 from OpenGL.GL import *
 import glm
 
@@ -93,10 +91,9 @@ class RenderModel:
 
     def update(self, new_position, new_rotation_matrix, new_scale=(1,1,1)):
         # order should be scale, rotate, translate. So trans_mat*rot_mat*scale_mat.
-        self.model_matrix = glm.mat4(glm.mat3(new_rotation_matrix))
-        self.model_matrix = glm.translate(self.model_matrix,glm.vec3(new_position))
-        #self.model_matrix = glm.translate(glm.mat4(1),glm.vec3(new_position))
-        #self.model_matrix = glm.mat4(glm.mat3(new_rotation_matrix))*self.model_matrix
+        rotation_4d = glm.mat4(glm.mat3(new_rotation_matrix))
+        translation_4d = glm.translate(glm.mat4(1),glm.vec3(new_position))
+        self.model_matrix = translation_4d*rotation_4d
 
     def get_MVP_matrix(self, view_matrix, projection_matrix):
         return projection_matrix * view_matrix * self.model_matrix

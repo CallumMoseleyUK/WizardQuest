@@ -82,13 +82,13 @@ if __name__ == '__main__':
     world.spawn_entity(player_controller)
     world.spawn_entity(player_pawn)
 
-    ## Add an entity
+    ## Spawn entities
     ent_list = []
     pos = np.array([[0.0,0.0,6.0],
                     [-6.0,0.0,0.0],
                     [0.0,6.0,0.0],
                     [0.0,-6.0,0.0]])
-    pos = np.array([[6.0,0.0,0.0]])
+    #pos = np.array([[6.0,0.0,0.0]])
 
     #dummy_model = RenderModel(Mesh(),Shader())
     #dummy_model.update((5.0,0,0),viewport.rotation_matrix())
@@ -129,8 +129,8 @@ if __name__ == '__main__':
                               user_input.view_rotation[2], bDegrees=True)
         player_controller.apply_input_direction(user_input.input_direction,viewport)
 
-        P,I,D = 1.0, 1.0, 1.0
-        #force.force = P*(viewport.x_axis()*8.0 +player_pawn.position - first_entity.position) + D*(-first_entity.velocity)
+        P,I,D = 5.0, 1.0, 1.0
+        force.force = P*(viewport.x_axis()*8.0 +player_pawn.position - first_entity.position) + D*(-first_entity.velocity)
 
         world.update(dt)
         display.set_view(viewport.position, viewport.x_axis(), (0,0,1))
