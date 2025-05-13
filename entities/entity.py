@@ -1,7 +1,7 @@
 import numpy as np
 import mathquest.quaternion as mqq
 from graphics.render_engine import RenderEngine
-#from models.model import RenderObject
+from collision.collision import CollisionModel
 
 class Entity:
     '''
@@ -19,6 +19,8 @@ class Entity:
 
         self._child_entities = []
         self._render_model = None
+
+        self._collision_model = None
 
     def update(self,dt,parent=None):
         for effect in self._effects:
@@ -42,12 +44,24 @@ class Entity:
         RenderEngine.remove_model(self._render_model)
         self._render_model = None
 
+    def check_collision(self,ent):
+        self._collision_model.offset = self.position
+        ent._collision_model.offset = ent.position
+        return self._collision_model.check_intersects(ent._collision_model)
+        
+
     def add_effect(self,effect):
         self._effects.append(effect)
         effect.added(self)
     def remove_effect(self,effect):
         self._effects.remove(effect)
         effect.removed(self)
+
+    def add_collision_model(self,collision_model):
+        self._collision_model = collision_model
+
+    def remove_collision_model(self):
+        self._collision_model = None
     
     
     def add_child(self,child):

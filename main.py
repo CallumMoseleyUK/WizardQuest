@@ -136,8 +136,6 @@ if __name__ == '__main__':
         display.set_view(viewport.position, viewport.x_axis(), (0,0,1))
         world.draw(viewport)
         dt = display.update()
-        
-        print('ent p: ',first_entity.position)
 
     pg.quit()
 

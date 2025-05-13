@@ -1,16 +1,16 @@
 import entities.entity as ent
-from entities.viewport import Viewport
-import mathquest.matrix as mqm
-import mathquest.quaternion as mqq
 from graphics.render_engine import RenderEngine
+from collision.collision import CollisionManager
 
 class World(ent.Entity):
 
     def __init__(self):
         super().__init__()
+        self.collision_manager = CollisionManager()
 
     def update(self,dt):
         super().update(dt)
+
 
     def draw(self,viewport):
         super().draw(viewport)

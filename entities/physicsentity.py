@@ -3,10 +3,11 @@ import numpy as np
 
 class PhysicsEntity(ent.DynamicEntity):
     '''
-    Dynamic entities with physics.
+    Dynamic entities with inertia.
     '''
     _mass_minmax = (1e-3, 1.0e10)
     _inertia_tensor_minmax = (1e-3, 1.0e10)
+    
     def __init__(self):
         super().__init__()
         self.mass = 1.0
