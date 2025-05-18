@@ -96,9 +96,7 @@ class Mesh:
         self.indices = []
         self.normals = []
         self.texcoords = []
-        print(fname)
         for line in f:
-            print(line)
             if line.startswith('#'): continue
             items = line.split()
 

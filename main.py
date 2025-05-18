@@ -79,13 +79,13 @@ if __name__ == '__main__':
     first_entity = ent_list[0]
     first_entity.velocity = [
         0.0,
-        0.2,
+        0.0,
         0.0
         ]
     first_entity.angular_velocity = [
         0.0,
         0.0,
-        0.2
+        0.0
         ]
     
     ## Add a force
@@ -104,7 +104,7 @@ if __name__ == '__main__':
                               user_input.view_rotation[2], bDegrees=True)
         player_controller.apply_input_direction(user_input.input_direction,viewport)
 
-        P,I,D = 5.0, 1.0, 1.0
+        P,I,D = 3.0, 1.0, 1.0
         force.force = P*(viewport.x_axis()*8.0 +player_pawn.position - first_entity.position) + D*(-first_entity.velocity)
 
         world.update(dt)
