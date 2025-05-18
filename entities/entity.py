@@ -27,6 +27,7 @@ class Entity:
             effect.update(dt,self)
         for child in self._child_entities:
             child.update(dt,parent=self)
+        
 
     def draw(self,viewport,parent=None):
         draw_position = self.position
