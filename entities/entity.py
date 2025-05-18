@@ -118,11 +118,11 @@ class Entity:
         self._quaternion = mqq.Quat.euler_to_quat(roll=value[0],pitch=value[1],yaw=value[2])
 
     @property
-    def render_object(self):
-        return self._render_object
-    @render_object.setter
-    def render_object(self,value):
-        self._render_object = value
+    def render_model(self):
+        return self._render_model
+    @render_model.setter
+    def render_model(self,value):
+        self._render_model = value
     
 
 class DynamicEntity(Entity):

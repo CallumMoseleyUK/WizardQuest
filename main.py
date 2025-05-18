@@ -1,46 +1,19 @@
 import pygame as pg
 import numpy as np
 from asset_manager import AssetManager
-import entities.entity as ent
 import entities.physicsentity as phys_ent
 from entities.viewport import *
 from entities.pawn import Pawn
 from world import World
 from display import Display
-import math
 from userinput import UserInput
 from controllers.playercontroller import PlayerController
 import entity_effects.force as force_effect
 
-try:
-    import OpenGL.GL as GL
-    import OpenGL.GLU as GLU
-except ImportError:
-    print("pyopengl missing. Requires: pyopengl numpy")
-    raise SystemExit
 import os
-
-from graphics.render_engine import RenderModel,RenderEngine
-from models.mesh import Mesh
-from graphics.shader import Shader
 
 def cls():
     os.system('cls' if os.name=='nt' else 'clear')
-
-def init_key_bindings():
-    key_bindings = {}
-    key_bindings['exit'] = pg.K_ESCAPE
-    key_bindings['move_forward'] = pg.K_w
-    key_bindings['move_backward'] = pg.K_s
-    key_bindings['move_left'] = pg.K_a
-    key_bindings['move_right'] = pg.K_d
-    key_bindings['move_up'] = pg.K_SPACE
-    key_bindings['move_down'] = pg.K_LCTRL
-    key_bindings['rotate_up'] = pg.K_DOWN
-    key_bindings['rotate_down'] = pg.K_UP
-    key_bindings['rotate_left'] = pg.K_LEFT
-    key_bindings['rotate_right'] = pg.K_RIGHT
-    return key_bindings
 
 def exit_event():
     print('Exit event called')
@@ -94,9 +67,11 @@ if __name__ == '__main__':
     #dummy_model.update((5.0,0,0),viewport.rotation_matrix())
     #RenderEngine.add_model(dummy_model)
 
+    mesh_path = r'data\models\suzanne\suzanne.obj'
+    texture_path = r'data\models\suzanne\uvmap.DDS'
     for i in range(len(pos)):
         e = phys_ent.PhysicsEntity()
-        e.add_render_model(asset_manager.load_render_model(None,None))
+        e.add_render_model(asset_manager.load_render_model(mesh_path,texture_path=texture_path))
         e.position = pos[i]
         e.angular_velocity[0] = 0.0
         ent_list.append(e)

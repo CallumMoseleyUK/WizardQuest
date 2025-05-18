@@ -1,6 +1,6 @@
-from models.mesh import Mesh
+from meshes.mesh import Mesh
 import numpy as np
-from bounding_geometry import *
+from collision.bounding_geometry import *
 
 class CollisionManager:
     def __init__(self):
@@ -50,6 +50,9 @@ class CollisionPrimitive:
         return 
 
 class CollisionPrimitiveSphere:
+    '''
+    In this primitive, if boundingsphere check is passed, move straight to collision response, skipping boundingbox checks.
+    '''
     def __init__(self, radius=1.0):
         self.radius = radius
 

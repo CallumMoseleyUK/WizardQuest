@@ -2,7 +2,7 @@ import numpy as np
 import mathquest.matrix as mqm
 import glm
 import pygame as pg
-from graphics.render_engine import RenderEngine,RenderModel
+from graphics.render_engine import RenderEngine
 try:
     import OpenGL.GL as GL
 except ImportError:
