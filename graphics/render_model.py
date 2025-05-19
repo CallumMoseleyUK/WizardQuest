@@ -6,35 +6,33 @@ from meshes.mesh import Mesh
 
 class RenderModel:
 
-    def __init__(self,mesh_path, texture_path='', shader_path=''):
+    def __init__(self,mesh, texture='', shader=''):
         self.model_matrix = glm.mat4(1)
-        self.mesh_path = mesh_path
-        self.texture_path = texture_path
-        self.shader_path = shader_path
+        self.mesh = mesh
+        self.texture = texture
+        self.shader = shader
 
     def make_context(self):
-        self.load_mesh()
-        self.load_shader()
-        self.load_object()
-        self.load_texture()
+        if self.mesh != None: self.init_mesh()
+        if self.shader != None: self.init_shader()
+        if self.mesh!=None: self.init_object()
+        if self.texture!=None: self.init_texture()
         return self
     
     def removed(self):
         pass
         
-    def load_mesh(self):
-        self.mesh = Mesh(self.mesh_path)
+    def init_mesh(self):
+        pass
 
-    def load_shader(self):
-        self.shader = Shader()
-        self.shader.initShaderFromGLSL(
-            ["data/shaders/vertex.glsl"], ["data/shaders/fragment.glsl"])
+    def init_shader(self):
+        #self.shader.initShaderFromGLSL() #done in Shader constructor
         self.MVP_ID = glGetUniformLocation(self.shader.program, "MVP")
         self.OFFSET_ID = glGetUniformLocation(self.shader.program, "OFFSET")
         self.Texture_ID =  glGetUniformLocation(self.shader.program, "myTextureSampler")
 
 
-    def load_object(self):
+    def init_object(self):
         self.vertexbuffer = glGenBuffers(1)
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self.vertexbuffer)
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, len(self.mesh.vertex_data)*4, 
@@ -53,14 +51,13 @@ class RenderModel:
         #glBufferData(GL_ARRAY_BUFFER, len(self.mesh.color_data)*4, (GLfloat *
         #                                                       len(self.mesh.color_data))(*self.mesh.color_data), GL_STATIC_DRAW)
         
-    def load_texture(self):
-        texture = Texture(self.texture_path)	
-        if(texture.inversedVCoords):
+    def init_texture(self):
+        if(self.texture.inversedVCoords):
             for index in range(0,len(self.mesh.texcoords)):
                 if(index % 2):
                     self.mesh.texcoords[index] = 1.0 - self.mesh.texcoords[index]
 
-        self.texturebuffer = texture.textureGLID
+        self.texturebuffer = self.texture.textureGLID
 
         self.uvbuffer  = glGenBuffers(1)
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,self.uvbuffer)            
@@ -82,17 +79,18 @@ class RenderModel:
         self.shader.begin()
         glUniformMatrix4fv(self.MVP_ID, 1, GL_FALSE,  glm.value_ptr(model_view_projection)  )
 
-        glActiveTexture(GL_TEXTURE0)
-        glBindTexture(GL_TEXTURE_2D, self.texturebuffer)
-        glUniform1i(self.Texture_ID, 0) 		#// Set  "myTextureSampler" sampler to use Texture Unit 0
+        if self.texture != None:
+            glActiveTexture(GL_TEXTURE0)
+            glBindTexture(GL_TEXTURE_2D, self.texturebuffer)
+            glUniform1i(self.Texture_ID, 0) 		#// Set  "myTextureSampler" sampler to use Texture Unit 0
+
+            glEnableVertexAttribArray(1)
+            glBindBuffer(GL_ARRAY_BUFFER, self.uvbuffer)
+            glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE,0,None)
 
         glEnableVertexAttribArray(0)
         glBindBuffer(GL_ARRAY_BUFFER, self.vertexbuffer)
         glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,0,None)
-
-        glEnableVertexAttribArray(1)
-        glBindBuffer(GL_ARRAY_BUFFER, self.uvbuffer)
-        glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE,0,None)
         
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self.indicesbuffer)
         glDrawElements(

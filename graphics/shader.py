@@ -10,7 +10,13 @@ import mathquest.matrix as mqm
 
 class Shader:
 
-    def initShaderFromGLSL(self, vertex_shader_paths, fragment_shader_paths):
+    def __init__(self,filenames):
+        self.paths = filenames
+        self.initShaderFromGLSL()
+
+    def initShaderFromGLSL(self): #vertex_shader_paths, fragment_shader_paths):
+        vertex_shader_paths = [self.paths[0]]
+        fragment_shader_paths = [self.paths[1]]
         vertex_shader_source_list = []
         fragment_shader_source_list = []
         if(isinstance(vertex_shader_paths,list)):

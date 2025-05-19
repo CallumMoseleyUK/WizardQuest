@@ -82,6 +82,7 @@ class Texture:
         glGenerateMipmap(GL_TEXTURE_2D)
 
     def __init__(self,fname,mode="RGB"):
+        self.path = fname
         self.inversedVCoords = False
         fname =  os.path.abspath(os.path.join(os.path.join(os.path.dirname(__file__),".."),fname))
         if(fname.lower().endswith(".DDS")):
@@ -92,3 +93,6 @@ class Texture:
     def __len__(self):
         return len(self.buffer)
     
+if __name__=='__main__':
+    texture_path = r'data\models\suzanne\uvmap.DDS'
+    tex = Texture(texture_path)

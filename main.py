@@ -19,7 +19,7 @@ def exit_event():
     print('Exit event called')
 
 if __name__ == '__main__':
-    print('BoredomQuest running')
+    print('WizardQuest running')
 
     ## Settings
     screen_resolution = (800, 480)
@@ -68,10 +68,13 @@ if __name__ == '__main__':
     #RenderEngine.add_model(dummy_model)
 
     mesh_path = r'data\models\suzanne\suzanne.obj'
-    texture_path = r'data\models\suzanne\uvmap.DDS'
+    texture_path = r'data\models\suzanne\suzanne.DDS'
+    #shader_paths = [ r'data\shaders\suzanne_vert.glsl', r'data\shaders\suzanne_frag.glsl' ]
+    shader_paths = [ r'data\shaders\terrain_vert.glsl', r'data\shaders\terrain_frag.glsl' ]
+    
     for i in range(len(pos)):
         e = phys_ent.PhysicsEntity()
-        e.add_render_model(asset_manager.load_render_model(mesh_path,texture_path=texture_path))
+        e.add_render_model(asset_manager.load_render_model(mesh_path,texture_path=texture_path,shader_paths=shader_paths))
         e.position = pos[i]
         e.angular_velocity[0] = 0.0
         ent_list.append(e)
@@ -84,8 +87,8 @@ if __name__ == '__main__':
         ]
     first_entity.angular_velocity = [
         0.0,
-        0.0,
-        0.0
+        0.2,
+        0.2
         ]
     
     ## Add a force
@@ -114,4 +117,4 @@ if __name__ == '__main__':
 
     pg.quit()
 
-    print('BoredomQuest quit')
+    print('WizardQuest quit')
