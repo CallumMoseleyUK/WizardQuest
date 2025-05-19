@@ -30,7 +30,7 @@ class Display:
         ## Initialise pg
         pg.init()
         pg.display.set_caption(caption)
-        pg.display.set_icon(pg.image.load(icon_path))
+        #pg.display.set_icon(pg.image.load(icon_path))
 
         gl_version = (3, 1)  # GL Version number (Major, Minor)
 
