@@ -1,16 +1,9 @@
-import pygame as pg
 import numpy as np
-from asset_manager import AssetManager
 import entities.physicsentity as phys_ent
 from entities.viewport import *
-from entities.pawn import Pawn
-from world import World
-from display import Display
-from userinput import UserInput
-from controllers.playercontroller import PlayerController
 import entity_effects.force as force_effect
-
 import os
+from game import Game
 
 def cls():
     os.system('cls' if os.name=='nt' else 'clear')
@@ -28,33 +21,13 @@ if __name__ == '__main__':
     znear = 0.1
     zfar = 50.0
 
-    ## Initialise input
-    user_input = UserInput()
-    user_input.set_exit_function(exit_event)
-
-    ## Initialise display
-    display = Display(screen_resolution=screen_resolution,
-                      framerate=framerate,
-                      field_of_view=field_of_view,
-                      znear=znear,
-                      zfar=zfar)
-    display.init_render_engine()
+    ## Initialize game
+    game = Game(screen_resolution=screen_resolution,
+                framerate=framerate,
+                field_of_view=field_of_view,
+                znear=znear,
+                zfar=zfar)
     
-    ## Initialise asset management
-    asset_manager = AssetManager(display)
-
-    ## Initialise world
-    world = World()
-    viewport = Viewport()
-
-    ## Initialise player
-    player_pawn = Pawn()
-    player_pawn.add_child(viewport)
-    player_controller = PlayerController(player_pawn)
-    player_pawn.position[0] = 0.0
-    world.spawn_entity(player_controller)
-    world.spawn_entity(player_pawn)
-
     ## Spawn entities
     ent_list = []
     pos = np.array([[0.0,0.0,6.0],
@@ -74,11 +47,11 @@ if __name__ == '__main__':
     
     for i in range(len(pos)):
         e = phys_ent.PhysicsEntity()
-        e.add_render_model(asset_manager.load_render_model(mesh_path,texture_path=texture_path,shader_paths=shader_paths))
+        e.add_render_model(game.asset_manager.load_render_model(mesh_path,texture_path=texture_path,shader_paths=shader_paths))
         e.position = pos[i]
         e.angular_velocity[0] = 0.0
         ent_list.append(e)
-        world.spawn_entity(e)
+        game.world.spawn_entity(e)
     first_entity = ent_list[0]
     first_entity.velocity = [
         0.0,
@@ -92,29 +65,12 @@ if __name__ == '__main__':
         ]
     
     ## Add a force
-    force_duration = -3.0
-    force = force_effect.Force(duration=force_duration)
+    #force_duration = -3.0
+    #force = force_effect.Force(duration=force_duration)
     #force.force[2] = 0.5
-    first_entity.add_effect(force)
+    #first_entity.add_effect(force)
 
     ## Game loop
-    running = True
-    dt = 0.0 #time per frame in seconds
-    while running:
-        running = user_input.update(dt)
-        viewport.set_rotation(user_input.view_rotation[0],
-                              user_input.view_rotation[1],
-                              user_input.view_rotation[2], bDegrees=True)
-        player_controller.apply_input_direction(user_input.input_direction,viewport)
-
-        P,I,D = 3.0, 1.0, 1.0
-        force.force = P*(viewport.x_axis()*8.0 +player_pawn.position - first_entity.position) + D*(-first_entity.velocity)
-
-        world.update(dt)
-        display.set_view(viewport.position, viewport.x_axis(), (0,0,1))
-        world.draw(viewport)
-        dt = display.update()
-
-    pg.quit()
+    game.run()
 
     print('WizardQuest quit')
