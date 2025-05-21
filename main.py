@@ -18,8 +18,8 @@ if __name__ == '__main__':
     screen_resolution = (800, 480)
     framerate = 60
     field_of_view = 60.0
-    znear = 0.1
-    zfar = 50.0
+    znear = 0.01
+    zfar = 1000.0
 
     ## Initialize game
     game = Game(screen_resolution=screen_resolution,
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     
     ## Spawn entities
     ent_list = []
-    pos = np.array([[0.0,0.0,6.0],
+    pos = np.array([[6.0,0.0,0.0],
                     [-6.0,0.0,0.0],
                     [0.0,6.0,0.0],
                     [0.0,-6.0,0.0]])
@@ -40,9 +40,13 @@ if __name__ == '__main__':
     #dummy_model.update((5.0,0,0),viewport.rotation_matrix())
     #RenderEngine.add_model(dummy_model)
 
-    mesh_path = r'data\models\suzanne\suzanne.obj'
-    texture_path = r'data\models\suzanne\suzanne.DDS'
+    #mesh_path = r'data\models\suzanne\suzanne.obj'
+    #texture_path = r'data\models\suzanne\suzanne.DDS'
     #shader_paths = [ r'data\shaders\suzanne_vert.glsl', r'data\shaders\suzanne_frag.glsl' ]
+    #shader_paths = [ r'data\shaders\terrain_vert.glsl', r'data\shaders\terrain_frag.glsl' ]
+    
+    mesh_path = r'data\models\terrain_blender.obj'
+    texture_path = None
     shader_paths = [ r'data\shaders\terrain_vert.glsl', r'data\shaders\terrain_frag.glsl' ]
     
     for i in range(len(pos)):

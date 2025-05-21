@@ -13,8 +13,8 @@ class RenderModel:
         self.shader = shader
 
     def make_context(self):
-        if self.mesh != None: self.init_mesh()
-        if self.shader != None: self.init_shader()
+        if self.mesh!=None: self.init_mesh()
+        if self.shader!=None: self.init_shader()
         if self.mesh!=None: self.init_object()
         if self.texture!=None: self.init_texture()
         return self
@@ -38,11 +38,11 @@ class RenderModel:
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, len(self.mesh.vertex_data)*4, 
             (GLfloat * len(self.mesh.vertex_data))(*self.mesh.vertex_data), GL_STATIC_DRAW)
 
-        self.indicesbufferSize = len(self.mesh.indices)
+        self.facesbufferSize = len(self.mesh.faces)
 
-        self.indicesbuffer = glGenBuffers(1)        		
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,self.indicesbuffer)
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER,len(self.mesh.indices)*2,(GLushort * len(self.mesh.indices))(*self.mesh.indices),GL_STATIC_DRAW)
+        self.facesbuffer = glGenBuffers(1)        		
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,self.facesbuffer)
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER,len(self.mesh.faces)*2,(GLushort * len(self.mesh.faces))(*self.mesh.faces),GL_STATIC_DRAW)
 
         #self.vertexLen = len(self.mesh.vertex_data)
 
@@ -92,10 +92,10 @@ class RenderModel:
         glBindBuffer(GL_ARRAY_BUFFER, self.vertexbuffer)
         glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,0,None)
         
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self.indicesbuffer)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self.facesbuffer)
         glDrawElements(
             GL_TRIANGLES,      # mode
-            self.indicesbufferSize,    #// count
+            self.facesbufferSize,    #// count
             GL_UNSIGNED_SHORT, #  // type
             None          #// element array buffer offset
         )
