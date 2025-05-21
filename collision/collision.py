@@ -19,9 +19,7 @@ class CollisionManager:
             
 
 class CollisionModel:
-    ''' A collection of primitives, i.e. meshes, spheres etc.
-    TODO: assumes mostly symmetric objects, as bounding box does not rotate with the object.'''
-
+    ''' A collection of primitives '''
     def __init__(self):
         super().__init__(self)
         self.collision_primitives = []
@@ -41,21 +39,6 @@ class CollisionModel:
         for primitive in self.collision_primitives:
             self._bounding_box = self._bounding_box.union(primitive._bounding_box)
         self._bounding_box = BoundingBox(lower,upper)
-
-class CollisionPrimitive:
-    def __init__(self):
-        self._bounding_box = BoundingBox(np.array([0.0,0.0,0.0]),np.array([0.0,0.0,0.0]),np.array([0.0,0.0,0.0]))
-
-    def check_collision(self,primitive):
-        return 
-
-class CollisionPrimitiveSphere:
-    '''
-    In this primitive, if boundingsphere check is passed, move straight to collision response, skipping boundingbox checks.
-    '''
-    def __init__(self, radius=1.0):
-        self.radius = radius
-
 
 
 

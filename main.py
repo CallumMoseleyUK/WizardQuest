@@ -40,14 +40,14 @@ if __name__ == '__main__':
     #dummy_model.update((5.0,0,0),viewport.rotation_matrix())
     #RenderEngine.add_model(dummy_model)
 
-    #mesh_path = r'data\models\suzanne\suzanne.obj'
-    #texture_path = r'data\models\suzanne\suzanne.DDS'
-    #shader_paths = [ r'data\shaders\suzanne_vert.glsl', r'data\shaders\suzanne_frag.glsl' ]
+    mesh_path = r'data\models\suzanne\suzanne.obj'
+    texture_path = r'data\models\suzanne\suzanne.DDS'
+    shader_paths = [ r'data\shaders\suzanne_vert.glsl', r'data\shaders\suzanne_frag.glsl' ]
     #shader_paths = [ r'data\shaders\terrain_vert.glsl', r'data\shaders\terrain_frag.glsl' ]
     
-    mesh_path = r'data\models\terrain_blender.obj'
-    texture_path = None
-    shader_paths = [ r'data\shaders\terrain_vert.glsl', r'data\shaders\terrain_frag.glsl' ]
+    #mesh_path = r'data\models\terrain_blender.obj'
+    #texture_path = None
+    #shader_paths = [ r'data\shaders\terrain_vert.glsl', r'data\shaders\terrain_frag.glsl' ]
     
     for i in range(len(pos)):
         e = phys_ent.PhysicsEntity()
