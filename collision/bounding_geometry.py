@@ -2,6 +2,9 @@ import numpy as np
 
 class BoundingGeometry:
 
+    _SQRT2 = np.sqrt(2.0)
+    _INV_SQRT2 = 1.0/_SQRT2
+
     def __str__(self):
         out = ''
         for key,value in self.__dict__.items():
@@ -75,12 +78,28 @@ class BoundingSphere(BoundingBox):
         self._lower = np.zeros(3) - self.radius
 
     @property
-    def offset(self):
-        return super().offset
-    @offset.setter
-    def offset(self,value):
-        self._offset = value
-        self.radius = self.radius
+    def lower(self):
+        return super().lower
+    @property
+    def upper(self):
+        return super().upper
+    @lower.setter
+    def lower(self,value):
+        self._lower = np.array(value) - self.offset
+        self._radius = self.radius_inside_box(self._lower,self._upper)
+    @upper.setter
+    def upper(self,value):
+        self._upper = np.array(value) - self.offset
+        self._radius = self.radius_inside_box(self._lower,self._upper)
+
+    def radius_inside_box(self,lower,upper):
+        #return BoundingGeometry._INV_SQRT2 * 0.5 * np.linalg.norm(upper-lower)
+        diff = upper-lower
+        norm = np.linalg.norm(diff) * 0.5
+        return np.cos(np.atan2(diff[0]/norm,diff[1]/norm))*norm
+    def radius_contains_box(self,lower,upper):
+        diff = upper-lower
+        return np.linalg.norm(diff)*0.5
 
     def check_intersects(self,other):
         if not isinstance(other, BoundingSphere):
@@ -90,8 +109,11 @@ class BoundingSphere(BoundingBox):
         return distance_squared<=(self.radius+other.radius)**2
     
     def union(self,other):
-        upper_new = np.max([self.upper,other.upper],axis=0)
-        lower_new = np.min([self.lower,other.lower],axis=0)
-        offset_new = 0.5*(upper_new+lower_new)
-        radius_new = 0.5*np.linalg.norm(upper_new-lower_new)
-        return BoundingSphere(radius_new,offset_new)
+        bounding_geo = super().union(other)
+        if not isinstance(other,BoundingSphere):
+            return bounding_geo
+        upper_new = bounding_geo.upper
+        lower_new = bounding_geo.lower
+        #offset_new = bounding_geo.offset
+        bounding_geo.radius = bounding_geo.radius_contains_box(lower_new,upper_new)
+        return bounding_geo
