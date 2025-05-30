@@ -7,6 +7,7 @@ from world import World
 from display import Display
 from userinput import UserInput
 from controllers.playercontroller import PlayerController
+from graphics.render_engine import RenderEngine
 
 class Game:
     def exit_event(self):
@@ -25,7 +26,7 @@ class Game:
         self.display.init_render_engine()
 
         ## Initialise asset management
-        self.asset_manager = AssetManager(self.display)
+        self.asset_manager = AssetManager()
 
         ## Initialise world
         self.world = World()
@@ -55,6 +56,7 @@ class Game:
             self.world.update(dt)
             self.display.set_view(self.viewport.position, self.viewport.x_axis(), (0,0,1))
             self.world.draw(self.viewport)
+            RenderEngine.draw_scene()
             dt = self.display.update()
 
         pg.quit()

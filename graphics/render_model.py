@@ -2,7 +2,7 @@ from OpenGL.GL import *
 import glm
 from graphics.texture import Texture
 from graphics.shader import Shader
-from meshes.mesh import Mesh
+from graphics.mesh import Mesh
 
 class RenderModel:
 

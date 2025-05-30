@@ -4,6 +4,8 @@ class BoundingGeometry:
 
     _SQRT2 = np.sqrt(2.0)
     _INV_SQRT2 = 1.0/_SQRT2
+    _SQRT3 = np.sqrt(3.0)
+    _INV_SQRT3 = 1.0/_SQRT3
 
     def __str__(self):
         out = ''
@@ -51,22 +53,15 @@ class BoundingGeometry:
         return self._upper + self._offset
     @lower.setter
     def lower(self,value):
-        self._lower = value - self.offset
+        self._lower = value - self._offset
     @upper.setter
     def upper(self,value):
-        self._upper = value - self.offset
+        self._upper = value - self._offset
 
-    
-class BoundingBox(BoundingGeometry):
-    def __init__(self,lower=[0.0,0.0,0.0],upper=[0.0,0.0,0.0],offset=[0.0,0.0,0.0]):
-        self._lower = lower
-        self._upper = upper
-        self.offset = offset
-
-class BoundingSphere(BoundingBox):
+class BoundingSphere(BoundingGeometry):
     def __init__(self, radius=0.0, offset = [0.0,0.0,0.0]):
         self.radius = radius
-        self.offset = np.array(offset)
+        self.offset = offset
 
     @property
     def radius(self):
@@ -77,29 +72,13 @@ class BoundingSphere(BoundingBox):
         self._upper = np.zeros(3) + self.radius
         self._lower = np.zeros(3) - self.radius
 
-    @property
-    def lower(self):
-        return super().lower
-    @property
-    def upper(self):
-        return super().upper
-    @lower.setter
-    def lower(self,value):
-        self._lower = np.array(value) - self.offset
-        self._radius = self.radius_inside_box(self._lower,self._upper)
-    @upper.setter
-    def upper(self,value):
-        self._upper = np.array(value) - self.offset
-        self._radius = self.radius_inside_box(self._lower,self._upper)
-
-    def radius_inside_box(self,lower,upper):
-        #return BoundingGeometry._INV_SQRT2 * 0.5 * np.linalg.norm(upper-lower)
-        diff = upper-lower
-        norm = np.linalg.norm(diff) * 0.5
-        return np.cos(np.atan2(diff[0]/norm,diff[1]/norm))*norm
     def radius_contains_box(self,lower,upper):
         diff = upper-lower
         return np.linalg.norm(diff)*0.5
+    
+    def radius_inside_box(self,lower,upper):
+        diff = upper-lower
+        return min(diff)*0.5
 
     def check_intersects(self,other):
         if not isinstance(other, BoundingSphere):
@@ -111,9 +90,14 @@ class BoundingSphere(BoundingBox):
     def union(self,other):
         bounding_geo = super().union(other)
         if not isinstance(other,BoundingSphere):
-            return bounding_geo
-        upper_new = bounding_geo.upper
-        lower_new = bounding_geo.lower
-        #offset_new = bounding_geo.offset
-        bounding_geo.radius = bounding_geo.radius_contains_box(lower_new,upper_new)
+            return other.union(self)
+        distance = np.linalg.norm(self.offset-other.offset)
+        bounding_geo.offset = (self.offset+other.offset)*0.5
+        bounding_geo.radius = distance*0.5 + max(self.radius,other.radius)
         return bounding_geo
+
+class BoundingBox(BoundingGeometry):
+    def __init__(self,lower=[0.0,0.0,0.0],upper=[0.0,0.0,0.0],offset=[0.0,0.0,0.0]):
+        self._lower = lower
+        self._upper = upper
+        self.offset = offset

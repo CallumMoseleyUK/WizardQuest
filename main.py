@@ -2,6 +2,7 @@ import numpy as np
 import entities.physicsentity as phys_ent
 from entities.viewport import *
 import entity_effects.force as force_effect
+from collision.collision import CollisionModel
 import os
 from game import Game
 
@@ -34,24 +35,12 @@ if __name__ == '__main__':
                     [-6.0,0.0,0.0],
                     [0.0,6.0,0.0],
                     [0.0,-6.0,0.0]])
-    #pos = np.array([[6.0,0.0,0.0]])
 
-    #dummy_model = RenderModel(Mesh(),Shader())
-    #dummy_model.update((5.0,0,0),viewport.rotation_matrix())
-    #RenderEngine.add_model(dummy_model)
+    render_model_name = 'unit_cube'
 
-    mesh_path = r'data\models\suzanne\suzanne.obj'
-    texture_path = r'data\models\suzanne\suzanne.DDS'
-    shader_paths = [ r'data\shaders\suzanne_vert.glsl', r'data\shaders\suzanne_frag.glsl' ]
-    #shader_paths = [ r'data\shaders\terrain_vert.glsl', r'data\shaders\terrain_frag.glsl' ]
-    
-    #mesh_path = r'data\models\terrain_blender.obj'
-    #texture_path = None
-    #shader_paths = [ r'data\shaders\terrain_vert.glsl', r'data\shaders\terrain_frag.glsl' ]
-    
     for i in range(len(pos)):
         e = phys_ent.PhysicsEntity()
-        e.add_render_model(game.asset_manager.load_render_model(mesh_path,texture_path=texture_path,shader_paths=shader_paths))
+        e.add_render_model(game.asset_manager.load_render_model_from_db(render_model_name))
         e.position = pos[i]
         e.angular_velocity[0] = 0.0
         ent_list.append(e)

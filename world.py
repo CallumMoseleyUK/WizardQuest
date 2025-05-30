@@ -14,7 +14,6 @@ class World(ent.Entity):
 
     def draw(self,viewport):
         super().draw(viewport)
-        RenderEngine.draw_scene()
 
     def spawn_entity(self,entity):
         self.add_child(entity)

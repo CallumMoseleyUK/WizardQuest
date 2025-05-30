@@ -1,4 +1,4 @@
-from meshes.mesh import Mesh
+from graphics.mesh import Mesh
 import numpy as np
 from collision.bounding_geometry import *
 
@@ -9,7 +9,7 @@ class CollisionManager:
     def apply_collisions(self,dt,ent_list):
         for ent1 in ent_list:
             for ent2 in ent_list:
-                if ent1==ent2 or not ent1.check_collision(ent2):
+                if ent1==ent2 or not ent1.collision_model.check_collision(ent2.collision_model):
                     continue
                 displacement = ent1.position - ent2.position
                 distance_squared = np.dot(displacement, displacement)
@@ -23,22 +23,22 @@ class CollisionModel:
     def __init__(self):
         super().__init__(self)
         self.collision_primitives = []
-        self._bounding_box = BoundingBox(np.array([0.0,0.0,0.0]),np.array([0.0,0.0,0.0]))
+        self._bounding_geometry = BoundingBox(np.array([0.0,0.0,0.0]),np.array([0.0,0.0,0.0]))
 
-    def add_primitive(self,primitive):
+    def add_primitive(self,primitive,bUpdate=False):
         self.collision_primitives.append(primitive)
-        self.update_bounding_box()
+        if bUpdate:
+            self.update_bounding_geometry()
     
-    def remove_primitive(self,primitive):
+    def remove_primitive(self,primitive,bUpdate=False):
         self.collision_primitives.remove(primitive)
-        self.update_bounding_box()
+        if bUpdate:
+            self.update_bounding_geometry()
 
     def update_bounding_box(self):
-        upper = np.array([0.0,0.0,0.0])
-        lower = np.array([0.0,0.0,0.0])
         for primitive in self.collision_primitives:
-            self._bounding_box = self._bounding_box.union(primitive._bounding_box)
-        self._bounding_box = BoundingBox(lower,upper)
+            self._bounding_geometry = self._bounding_geometry.union(primitive._bounding_geometry)
+        
 
 
 

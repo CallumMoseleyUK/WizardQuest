@@ -1,14 +1,14 @@
-from meshes.mesh import Mesh
+from graphics.mesh import Mesh
 from graphics.shader import Shader
 from graphics.render_model import RenderModel
 from graphics.texture import Texture
+from database import sql_handler as db
 
 class AssetManager:
     '''
     Used for managing data assets.
     '''
-    def __init__(self,display=None):
-        self.display = display
+    def __init__(self):
         self.manifest = {}
 
     def retrieve_from_manifest(self,key):
@@ -39,10 +39,10 @@ class AssetManager:
         texture = self.load_asset(Texture,texture_path)
         shader = self.load_asset(Shader,shader_paths)
         return RenderModel(mesh, texture=texture, shader=shader)
-            
-    @property
-    def display(self):
-        return self._display
-    @display.setter
-    def display(self,value):
-        self._display = value
+    
+    def load_render_model_from_db(self,model_name):
+        model_data = db.get_model_data(model_name)
+        mesh_path = model_data['mesh']
+        texture_path = model_data['texture']
+        shader_paths = (model_data['vert_shader'], model_data['frag_shader'])
+        return self.load_render_model(mesh_path=mesh_path,texture_path=texture_path,shader_paths=shader_paths)

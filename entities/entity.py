@@ -45,10 +45,10 @@ class Entity:
         RenderEngine.remove_model(self._render_model)
         self._render_model = None
 
-    def check_collision(self,ent):
+    def check_collision(self,other):
         self._collision_model.offset = self.position
-        ent._collision_model.offset = ent.position
-        return self._collision_model.check_intersects(ent._collision_model)
+        other._collision_model.offset = other.position
+        return self._collision_model.check_intersects(other._collision_model)
         
 
     def add_effect(self,effect):
