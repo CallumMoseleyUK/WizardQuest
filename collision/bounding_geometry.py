@@ -88,13 +88,24 @@ class BoundingSphere(BoundingGeometry):
         return distance_squared<=(self.radius+other.radius)**2
     
     def union(self,other):
-        bounding_geo = super().union(other)
         if not isinstance(other,BoundingSphere):
-            return other.union(self)
-        distance = np.linalg.norm(self.offset-other.offset)
-        bounding_geo.offset = (self.offset+other.offset)*0.5
-        bounding_geo.radius = distance*0.5 + max(self.radius,other.radius)
-        return bounding_geo
+            return super().union(other)
+        offset_diff = other.offset - self.offset
+        distance = np.linalg.norm(offset_diff)
+        if distance>0:
+            direction = offset_diff/distance
+            other_lower = other.offset - direction*other.radius
+            self_lower = self.offset - direction*self.radius
+            other_upper = other.offset + direction*other.radius
+            self_upper = self.offset + direction*self.radius
+            new_upper = np.max([other_lower,self_lower,other_upper,self_upper],axis=0)
+            new_lower = np.min([other_lower,self_lower,other_upper,self_upper],axis=0)
+            new_offset = 0.5*(new_upper+new_lower)
+            new_radius = 0.5*np.linalg.norm(new_upper-new_lower)
+        else:
+            new_offset = self.offset
+            new_radius = max(self.radius,other.radius)
+        return BoundingSphere(radius=new_radius,offset=new_offset)
 
 class BoundingBox(BoundingGeometry):
     def __init__(self,lower=[0.0,0.0,0.0],upper=[0.0,0.0,0.0],offset=[0.0,0.0,0.0]):
