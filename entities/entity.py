@@ -32,7 +32,7 @@ class Entity:
     def draw(self,viewport,parent=None):
         draw_position = self.position
         draw_quat = self.quaternion
-        if self._render_model != None:
+        if self._render_model is not None:
             self._render_model.update(draw_position,draw_quat.rotation_matrix())
         for child in self._child_entities:
             child.draw(viewport,parent=self)

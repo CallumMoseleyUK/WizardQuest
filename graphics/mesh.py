@@ -89,7 +89,7 @@ class Mesh:
         self.face_length = 0
         self.bNoUV = True
         self.bNoNormals = True
-        if filename != None:
+        if filename is not None:
             self.load_from_obj(filename)
 
     def load_from_obj(self,fname):

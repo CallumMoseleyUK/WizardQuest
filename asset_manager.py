@@ -2,7 +2,7 @@ from graphics.mesh import Mesh
 from graphics.shader import Shader
 from graphics.render_model import RenderModel
 from graphics.texture import Texture
-from database import sql_handler as db
+from database import db_handler as db
 
 class AssetManager:
     '''
@@ -27,7 +27,7 @@ class AssetManager:
         return (key,'asset') in self.manifest
 
     def load_asset(self, asset_class:type, key):
-        if key==None: return None
+        if key is None: return None
         asset = self.retrieve_from_manifest(key)
         if not asset:
             asset = asset_class(key)

@@ -36,7 +36,7 @@ if __name__ == '__main__':
                     [0.0,6.0,0.0],
                     [0.0,-6.0,0.0]])
 
-    render_model_name = 'unit_cube'
+    render_model_name = 'suzanne'
 
     for i in range(len(pos)):
         e = phys_ent.PhysicsEntity()

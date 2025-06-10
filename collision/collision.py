@@ -1,6 +1,7 @@
 from graphics.mesh import Mesh
 import numpy as np
 from collision.bounding_geometry import *
+from mathquest.quaternion import Quat
 
 class CollisionManager:
     def __init__(self):
@@ -8,11 +9,8 @@ class CollisionManager:
 
     def apply_collisions(self,models):
         model_list = models.copy()
-        for i,a in enumerate(model_list):
-            for b in model_list:
-                if not a or not b or a==b or a.cull_collision(b):
-                    continue
-                a.calculate_collision(b)
+        for i,model in enumerate(model_list):
+            if model is not None: model.calculate_collisions(model_list)
             model_list[i] = None
 
 class CollisionModel:
@@ -32,21 +30,27 @@ class CollisionModel:
         if bUpdate:
             self.update_bounding_geometry()
 
+    def update(self,world_position,world_quaternion):
+        pass
+
+
     def update_bounding_box(self):
         self._bounding_geometry = self.collision_primitives[0]._bounding_geometry
         for primitive in self.collision_primitives[1:]:
             self._bounding_geometry = self._bounding_geometry.union(primitive._bounding_geometry)
 
-    def cull_collision(self,other):
-        return not self._bounding_geometry.check_intersects(other._bounding_geometry)
+    def bounding_collision(self,other):
+        return self._bounding_geometry.check_intersects(other._bounding_geometry)
     
-    def calculate_collision(self,other):
-        for a in self.primitives:
-            for b in other.primitives:
-                a.calculate_collision(b)
-        
+    def cull_model_collisions(self,others):
+        return [other for other in others if other and self.bounding_collision(other)]
 
+    def calculate_model_collision(self,other):
+        pass
 
+    def calculate_collisions(self,others):
+        for other in self.cull_model_collisions(others):
+            self.calculate_model_collision(other)
 
 
     

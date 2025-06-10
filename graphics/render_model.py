@@ -13,10 +13,10 @@ class RenderModel:
         self.shader = shader
 
     def make_context(self):
-        if self.mesh!=None: self.init_mesh()
-        if self.shader!=None: self.init_shader()
-        if self.mesh!=None: self.init_object()
-        if self.texture!=None: self.init_texture()
+        if self.mesh is not None: self.init_mesh()
+        if self.shader is not None: self.init_shader()
+        if self.mesh is not None: self.init_object()
+        if self.texture is not None: self.init_texture()
         return self
     
     def removed(self):
@@ -79,7 +79,7 @@ class RenderModel:
         self.shader.begin()
         glUniformMatrix4fv(self.MVP_ID, 1, GL_FALSE,  glm.value_ptr(model_view_projection)  )
 
-        if self.texture != None:
+        if self.texture is not None:
             glActiveTexture(GL_TEXTURE0)
             glBindTexture(GL_TEXTURE_2D, self.texturebuffer)
             glUniform1i(self.Texture_ID, 0) 		#// Set  "myTextureSampler" sampler to use Texture Unit 0
