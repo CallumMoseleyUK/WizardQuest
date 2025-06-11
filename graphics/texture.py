@@ -6,6 +6,20 @@ from OpenGL.GL.EXT import texture_compression_s3tc
 from PIL import Image
 
 class Texture:
+    ''' Loads and stores a texture. Allows DDS format and PIL-readable images.'''
+
+    def __init__(self,filepath,mode="RGB"):
+        self.path = filepath
+        self.inversedVCoords = False
+        filepath =  os.path.abspath(os.path.join(os.path.join(os.path.dirname(__file__),".."),filepath))
+        if(filepath.lower().endswith(".DDS")):
+            self.loadDDS(filepath)
+        else:
+            self.loadByPIL(filepath,mode)    
+            
+    def __len__(self):
+        return len(self.buffer)
+    
     def loadDDS(self,fname):
         f = open(fname,'rb')
         ddstag =f.read(4)
@@ -80,19 +94,4 @@ class Texture:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
         glGenerateMipmap(GL_TEXTURE_2D)
-
-    def __init__(self,fname,mode="RGB"):
-        self.path = fname
-        self.inversedVCoords = False
-        fname =  os.path.abspath(os.path.join(os.path.join(os.path.dirname(__file__),".."),fname))
-        if(fname.lower().endswith(".DDS")):
-            self.loadDDS(fname)
-        else:
-            self.loadByPIL(fname,mode)    
-            
-    def __len__(self):
-        return len(self.buffer)
     
-if __name__=='__main__':
-    texture_path = r'data\models\suzanne\uvmap.DDS'
-    tex = Texture(texture_path)

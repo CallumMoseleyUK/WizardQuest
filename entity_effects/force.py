@@ -1,6 +1,6 @@
 import numpy as np
 from entity_effects.entity_effect import EntEffect
-from entities.entity import Entity,DynamicEntity
+from entities.entity import DynamicEntity
 from entities.physicsentity import PhysicsEntity
 
 class Acceleration(EntEffect):

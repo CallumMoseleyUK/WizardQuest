@@ -5,7 +5,7 @@ from collision.collision import CollisionModel
 
 class Entity:
     '''
-    Base class for entities with position, rotation and render/collision models
+    Base class for entities with position, rotation and optional render/collision models.
     '''
 
     def __init__(self):
@@ -27,6 +27,8 @@ class Entity:
             effect.update(dt,self)
         for child in self._child_entities:
             child.update(dt,parent=self)
+        if self._collision_model is not None:
+            self._collision_model.update(self.position,self.quaternion)
         
 
     def draw(self,viewport,parent=None):
@@ -60,6 +62,12 @@ class Entity:
 
     def add_collision_model(self,collision_model):
         self._collision_model = collision_model
+        collision_model.set_impulse_event(lambda impulse,offset : self.collision_event(impulse,offset))
+
+    def collision_event(self,impulse,offset):
+        print('Collision event')
+        print('Impulse: ', impulse)
+        print('Offset', offset)
 
     def remove_collision_model(self):
         self._collision_model = None

@@ -9,12 +9,15 @@ import numpy as np
 import mathquest.matrix as mqm
 
 class Shader:
-
+    ''' Loads, compiles and contains an OpenGL shader program. '''
+    
     def __init__(self,filenames):
+        ''' filenames: a list of GLSL file paths, ordered [vertex, fragment]'''
         self.paths = filenames
         self.initShaderFromGLSL()
 
-    def initShaderFromGLSL(self): #vertex_shader_paths, fragment_shader_paths):
+    def initShaderFromGLSL(self):
+        ''' Initialise shader from GLSL files'''
         vertex_shader_paths = [self.paths[0]]
         fragment_shader_paths = [self.paths[1]]
         vertex_shader_source_list = []
@@ -34,42 +37,35 @@ class Shader:
 
     def initShader(self, vertex_shader_source_list, fragment_shader_source_list):
         # create program
-        self.program= gl.glCreateProgram() # pylint: disable=E1111
-        #print('create program ',self.program)
-        #printOpenGLError()
+        self.program= gl.glCreateProgram()
 
         # vertex shader
-        #print('compile vertex shader...')
-        self.vs = gl.glCreateShader(gl.GL_VERTEX_SHADER) # pylint: disable=E1111
+        self.vs = gl.glCreateShader(gl.GL_VERTEX_SHADER)
         gl.glShaderSource(self.vs, vertex_shader_source_list)
         gl.glCompileShader(self.vs)
         if(gl.GL_TRUE!=gl.glGetShaderiv(self.vs, gl.GL_COMPILE_STATUS)):
             err =  gl.glGetShaderInfoLog(self.vs) 
             raise Exception(err)  
         gl.glAttachShader(self.program, self.vs)
-        #printOpenGLError()
 
         # fragment shader
-        #print('compile fragment shader...')
-        self.fs = gl.glCreateShader(gl.GL_FRAGMENT_SHADER) # pylint: disable=E1111
+        self.fs = gl.glCreateShader(gl.GL_FRAGMENT_SHADER)
         gl.glShaderSource(self.fs, fragment_shader_source_list)
         gl.glCompileShader(self.fs)
         if(gl.GL_TRUE!=gl.glGetShaderiv(self.fs, gl.GL_COMPILE_STATUS)):
             err =  gl.glGetShaderInfoLog(self.fs) 
             raise Exception(err)       
         gl.glAttachShader(self.program, self.fs)
-        #printOpenGLError()
 
-        #print('link...')
+        # link program
         gl.glLinkProgram(self.program)
         if(gl.GL_TRUE!=gl.glGetProgramiv(self.program, gl.GL_LINK_STATUS)):
             err =  gl.glGetShaderInfoLog(self.vs) 
-            raise Exception(err)          
-        #printOpenGLError()
+            raise Exception(err)
 
     def begin(self):
         if gl.glUseProgram(self.program):
-            print('glUseProgram failed')#printOpenGLError()
+            print('glUseProgram failed')
 
     def end(self):
         gl.glUseProgram(0)

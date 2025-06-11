@@ -1,4 +1,6 @@
-
+'''
+Functions for adding or reading dictionary records from a sqlite database.
+'''
 import sqlite3 as sql
 
 _db_path = 'data/databases/entity.db'

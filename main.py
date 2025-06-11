@@ -31,8 +31,8 @@ if __name__ == '__main__':
     
     ## Spawn entities
     ent_list = []
-    pos = np.array([[6.0,0.0,0.0],
-                    [-6.0,0.0,0.0],
+    pos = np.array([[6.0,-3.0,0.0],
+                    [6.0,0.0,0.0],
                     [0.0,6.0,0.0],
                     [0.0,-6.0,0.0]])
 
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     first_entity = ent_list[0]
     first_entity.velocity = [
         0.0,
-        0.0,
+        0.5,
         0.0
         ]
     first_entity.angular_velocity = [

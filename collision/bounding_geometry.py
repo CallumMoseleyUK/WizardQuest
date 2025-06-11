@@ -18,14 +18,14 @@ class BoundingGeometry:
         self._lower = np.zeros(3)
         self._offset = np.zeros(3)
     
-    def check_encloses(self,other):
-        upper_diff = self.upper - other.upper
-        lower_diff = self.lower - other.lower
+    def check_encloses(self,other,displacement=np.zeros(3)):
+        upper_diff = self.upper - other.upper + displacement
+        lower_diff = self.lower - other.lower + displacement
         return np.all(upper_diff>=0.0) and np.all(lower_diff<=0.0)
     
-    def check_intersects(self,other):
-        upper_diff = self.lower - other.upper
-        lower_diff = self.upper - other.lower
+    def check_intersects(self,other,displacement=np.zeros(3)):
+        upper_diff = self.lower - other.upper + displacement
+        lower_diff = self.upper - other.lower + displacement
         return not (np.any(upper_diff>=0.0) or np.any(lower_diff<=0.0))
 
     def union(self,other):
@@ -80,11 +80,11 @@ class BoundingSphere(BoundingGeometry):
         diff = upper-lower
         return min(diff)*0.5
 
-    def check_intersects(self,other):
+    def check_intersects(self,other,displacement=np.zeros(3)):
         if not isinstance(other, BoundingSphere):
-            return super().check_intersects(other)
-        displacement = self.offset - other.offset
-        distance_squared = np.dot(displacement,displacement)
+            return super().check_intersects(other,displacement=displacement)
+        offset_diff = self.offset - other.offset + displacement
+        distance_squared = np.dot(offset_diff,offset_diff)
         return distance_squared<=(self.radius+other.radius)**2
     
     def union(self,other):

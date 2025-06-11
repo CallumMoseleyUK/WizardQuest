@@ -2,6 +2,7 @@ from graphics.mesh import Mesh
 from graphics.shader import Shader
 from graphics.render_model import RenderModel
 from graphics.texture import Texture
+from collision.collision import CollisionModel
 from database import db_handler as db
 
 class AssetManager:
@@ -47,3 +48,6 @@ class AssetManager:
         texture_path = model_data['texture']
         shader_paths = (model_data['vert_shader'], model_data['frag_shader'])
         return self.load_render_model(mesh_path=mesh_path,texture_path=texture_path,shader_paths=shader_paths)
+    
+    def load_collision_model(self,mesh=None):
+        return CollisionModel()
