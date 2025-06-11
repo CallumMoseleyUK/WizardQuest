@@ -18,7 +18,8 @@ class AssetManager:
 
     def add_to_manifest(self,key,asset):
         key = str(key)
-        if self.check_manifest(key): self.manifest[key,'count'] += 1
+        if self.check_manifest(key):
+            self.manifest[key,'count'] += 1
         else:
             self.manifest[key,'asset'] = asset
             self.manifest[key,'count'] = 1
@@ -41,8 +42,8 @@ class AssetManager:
         return RenderModel(mesh, texture=texture, shader=shader)
     
     def load_render_model_from_db(self,model_name):
-        model_data = db.get_model_data(model_name)
-        mesh_path = model_data['mesh']
+        model_data = db.select_record(model_name,table='entity_data')
+        mesh_path = model_data['render_mesh']
         texture_path = model_data['texture']
         shader_paths = (model_data['vert_shader'], model_data['frag_shader'])
         return self.load_render_model(mesh_path=mesh_path,texture_path=texture_path,shader_paths=shader_paths)

@@ -1,35 +1,26 @@
 
-''' Placerholder for database functions '''
+import sqlite3 as sql
 
-_model_data = {}
-_model_data['suzanne'] = {
-    'mesh': 'data/meshes/suzanne/suzanne.obj',
-    'texture': 'data/meshes/suzanne/suzanne.DDS',
-    'vert_shader': 'data/shaders/suzanne_vert.glsl',
-    'frag_shader': 'data/shaders/suzanne_frag.glsl',
-    'collision_model': None
-}
-_model_data['terrain'] = {
-    'mesh': 'data/meshes/terrain.obj',
-    'texture': None,
-    'vert_shader': 'data/shaders/terrain_vert.glsl',
-    'frag_shader': 'data/shaders/terrain_frag.glsl',
-    'collision_model': None
-}
-_model_data['unit_sphere'] = {
-    'mesh': 'data/meshes/unit_sphere.obj',
-    'texture': None,
-    'vert_shader': 'data/shaders/sphere_vert.glsl',
-    'frag_shader': 'data/shaders/sphere_frag.glsl',
-    'collision_model': None
-}
-_model_data['unit_cube'] = {
-    'mesh': 'data/meshes/unit_cube.obj',
-    'texture': None,
-    'vert_shader': 'data/shaders/sphere_vert.glsl',
-    'frag_shader': 'data/shaders/sphere_frag.glsl',
-    'collision_model': None
-}
+_db_path = 'data/databases/entity.db'
 
-def get_model_data(model_name):
-    return _model_data[model_name]
+def _run_sql(code):
+    with sql.connect(_db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute(code)
+        result = cursor
+    return result
+
+def add_record(record,table='entity_data'):
+    keys,values = tuple(record.keys()),tuple(record.values())
+    columns = ('{},'*len(keys))[:-1].format(*keys)
+    values = ('\'{}\','*len(values))[:-1].format(*values)
+    code = 'INSERT INTO {} ({}) VALUES ({});'.format(table,columns,values)
+    _run_sql(code)
+
+def select_record(name,table='entity_data'):
+    code = f'SELECT * FROM {table} WHERE name = \'{name}\';'
+    result = _run_sql(code)
+    keys = [i[0] for i in result.description]
+    values = result.fetchone()
+    record = dict(zip(keys, values))
+    return record
