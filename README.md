@@ -1,2 +1,2 @@
-# WizardQuest
-## Generalised sim/game engine
+# WizardQuest (WIP)
+## Generalised simulation engine.
