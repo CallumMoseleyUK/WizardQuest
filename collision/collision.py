@@ -65,7 +65,7 @@ class CollisionModel:
         displacement = self.world_position - other.world_position
         for a in self.primitives:
             for b in other.primitives:
-                impulse,impulse_displacement += a.collision_impulse(b,displacement)
+                impulse,impulse_displacement = a.collision_impulse(b,displacement)
                 self.impulse_event(impulse,impulse_displacement)
 
 
